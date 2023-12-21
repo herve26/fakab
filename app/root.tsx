@@ -238,41 +238,37 @@ function App() {
 	return (
 		<Document nonce={nonce} theme={theme} env={data.ENV}>
 			<div className="flex h-screen flex-col justify-between">
-				<header className="container py-6">
+				<header className="container py-6 border-b-4 border-primary">
 					<nav>
 						<div className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
 							<Link to="/">
 								<div className="font-light">epic</div>
 								<div className="font-bold">notes</div>
 							</Link>
-							<div className="ml-auto hidden max-w-sm flex-1 sm:block">
-								{searchBar}
-							</div>
 							<div className="flex items-center gap-10">
-								{user ? (
+								{user && (
 									<UserDropdown />
-								) : (
-									<Button asChild variant="default" size="sm">
-										<Link to="/login">Log In</Link>
-									</Button>
-								)}
+								)} 
 							</div>
 							<div className="block w-full sm:hidden">{searchBar}</div>
 						</div>
 					</nav>
 				</header>
 
-				<div className="flex-1">
+				<main className="flex-1">
 					<Outlet />
-				</div>
+				</main>
 
-				<div className="container flex justify-between pb-5">
+				<footer className="container flex justify-between pb-5 bg-primary">
 					<Link to="/">
 						<div className="font-light">epic</div>
 						<div className="font-bold">notes</div>
 					</Link>
+					<Button asChild variant="default" size="sm">
+						<Link to="/login">Log In</Link>
+					</Button>
 					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-				</div>
+				</footer>
 			</div>
 			<EpicToaster toast={data.toast} />
 			<EpicProgress />

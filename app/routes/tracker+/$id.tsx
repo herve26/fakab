@@ -1,18 +1,26 @@
+import { prisma } from "#app/utils/db.server.ts";
+import { invariantResponse } from "@epic-web/invariant";
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
-
-
-export function loader({params}: LoaderFunctionArgs) {
+export async function loader({params}: LoaderFunctionArgs) {
+  const id = params.id
+  invariantResponse(id, 'Must Provide a connection ID', {status: 404})
   
-    const customerConnection = { id: 1, so: "FTTX-LIT-5330",  customer_details: "BASINYIZE NYUNDA RIEL", customer_contact: "243-818-889-434", customer_address: "Blv du 30 Juin Imm. Fini-One E 15A", area: "Gombe", completion_data: "07-Nov-23", team_id: "A"}
-    const materials = [{id: 0, name: 'pigtail'}]
+  const customerConnection = await prisma.customerConnections.findUnique({
+    where: { id }
+  })
+
+  const materials = [{id: 0, name: 'pigtail'}]
+
+  invariantResponse(customerConnection, 'Connection Not Found', { status: 404 })
+  invariantResponse(materials, 'Materials For Connection Not Found', {status: 404})
   
-    return json([customerConnection, materials]);
+    return json({customerConnection, materials});
   }
 
 export default function TrackerID(){
-    const [customerConnection, materials] = useLoaderData<typeof loader>()
+    const {customerConnection, materials} = useLoaderData<typeof loader>()
 
     return (
         <div className="flex flex-col space-y-4 px-6">
@@ -45,11 +53,11 @@ export default function TrackerID(){
                 </div>
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">Completion Date</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{customerConnection.completion_data}</dd>
+                  <dd className="mt-1 text-sm text-gray-900">{customerConnection.completion_date}</dd>
                 </div>
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">Team ID</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{customerConnection.team_id}</dd>
+                  <dd className="mt-1 text-sm text-gray-900">{customerConnection.teamId}</dd>
                 </div>
               </dl>
             </div>

@@ -25,6 +25,12 @@ model User {
   roles       Role[]
   sessions    Session[]
   connections Connection[]
+
+  inChargeOf Team? @relation("inChargeRef", fields: [inChargeOfId], references: [id])
+  inChargeOfId Int? @unique
+
+  team Team? @relation("teamRef", fields: [teamId], references: [id])
+  teamId Int?
 }
 
 model Note {
@@ -166,4 +172,33 @@ model Connection {
   userId String
 
   @@unique([providerName, providerId])
+}
+
+model CustomerConnections {
+  id String @id @default(cuid())
+  
+  so String @unique
+  customer_details String
+  customer_contact String
+  customer_address String
+  area String
+  geo_localization String
+  connection_type String
+
+  assignement_date DateTime @default(now())
+  completion_date DateTime?
+
+  team Team? @relation(fields: [teamId], references: [id])
+  teamId Int?
+}
+
+model Team {
+  id      Int      @id @default(autoincrement())
+  name    String
+
+  inCharge User? @relation("inChargeRef")
+
+  members User[] @relation("teamRef")
+
+  connections CustomerConnections[]
 }

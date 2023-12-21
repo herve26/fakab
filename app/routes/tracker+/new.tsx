@@ -1,7 +1,41 @@
+import { parse } from "@conform-to/zod";
+import { json, type ActionFunctionArgs, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
+import { z } from "zod";
+import { prisma } from "#app/utils/db.server.ts";
 
-export function action(){
-    
+const schema = z.object({
+    so: z.string().max(20, "Customer SO# cannot have more than 20 Charater"),
+    customer_details: z.string(),
+    customer_contact: z.string().length(10),
+    customer_address: z.string(),
+    area: z.string(),
+    geo_localization: z.string(),
+    connection_type: z.string()
+})
+
+export async function action({ request }: ActionFunctionArgs){
+    const formData = await request.formData()
+
+    const submission = parse(formData, {schema})
+
+    if(!submission.value){
+        return json({status: "error", submission}, {status: 404})
+    }
+
+    const connection = await prisma.customerConnections.create({
+        data: {
+            so: submission.value.so,
+            customer_details: submission.value.customer_details,
+            customer_address: submission.value.customer_address,
+            customer_contact: submission.value.customer_contact,
+            area: submission.value.area,
+            geo_localization: submission.value.geo_localization,
+            connection_type: submission.value.connection_type
+        }
+    })
+
+    return redirect(`/tracker/${connection.id}`)
 }
 
 export default function NewConnection(){
