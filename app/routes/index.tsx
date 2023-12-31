@@ -28,6 +28,7 @@ export default function IndexRoute(){
             <Card to="teams">Teams</Card>
             <Card to="users">Users</Card>
             <Card to="materials" icon="construction">Materials</Card>
+            <Card to="orders">Orders</Card>
         </div>
     )
 }

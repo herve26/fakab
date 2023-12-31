@@ -202,3 +202,41 @@ model Team {
 
   connections CustomerConnections[]
 }
+
+model Material {
+  materialId Int @id @default(autoincrement())
+  materialName String @unique
+  materialCode String @unique
+  materialDesc String?
+
+  materialUnit MaterialUnit @relation(fields: [materialUnitCode], references: [unitCode])
+  materialUnitCode String
+
+  orderDetail OrderDetail[]
+}
+
+model MaterialUnit {
+  unitCode String @id
+  unitName String
+
+  material Material[]
+}
+
+model Order {
+  orderId Int @id @default(autoincrement())
+  orderDate DateTime
+
+  details OrderDetail[]
+}
+
+model OrderDetail {
+  orderDetailId Int @id @default(autoincrement())
+  orderQuantity Int
+  receivedData DateTime
+
+  order Order @relation(fields: [orderId], references: [orderId])
+  orderId Int
+
+  material Material @relation(fields: [materialId], references: [materialId])
+  materialId Int
+}

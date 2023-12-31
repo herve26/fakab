@@ -249,6 +249,45 @@ async function seed() {
 	})
 	console.timeEnd(`🐨 Created admin user "kody"`)
 
+	console.time(' Seeding materials, material units, orders, and order details...');
+
+  // Seed Material Units
+  await prisma.materialUnit.create({ data: { unitCode: 'KG', unitName: 'Kilogram' } });
+  await prisma.materialUnit.create({ data: { unitCode: 'M', unitName: 'Meter' } });
+  await prisma.materialUnit.create({ data: { unitCode: 'PC', unitName: 'Piece' } });
+  // ... add more material units as needed
+
+  // Seed Materials
+  const material1 = await prisma.material.create({
+    data: {
+      materialName: 'Steel',
+      materialCode: 'STEEL-123',
+      materialDesc: 'High-quality steel',
+      materialUnitCode: 'KG',
+    },
+  });
+
+  const order1 = await prisma.order.create({ data: { orderDate: new Date() } });
+	await prisma.order.create({ data: { orderDate: new Date() } });
+
+  await prisma.orderDetail.create({
+    data: {
+      orderId: order1.orderId, // Assuming orders have been created already
+      materialId: material1.materialId,
+      orderQuantity: 100,
+      receivedData: new Date(),
+    },
+  });
+  // ... create other materials and their order details similarly
+
+  // Seed Orders
+  
+  // ... add more orders as needed
+
+  // ... create order details for other orders
+
+  console.timeEnd(' Seeding materials, material units, orders, and order details...');
+
 	console.timeEnd(`🌱 Database has been seeded`)
 }
 

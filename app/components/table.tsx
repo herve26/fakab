@@ -20,7 +20,7 @@ type Props = {
 export default function Table({headers, children}: Props){
     return (
         <div className="py-2 align-middle inline-block min-w-full">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            <div className="shadow-sm overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>{headers.map(header => <TH key={header}>{header}</TH>)}</tr>
