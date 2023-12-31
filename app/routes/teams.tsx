@@ -1,6 +1,5 @@
 import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
-import TeamCard from "#app/components/team-card.tsx";
 import { prisma } from "#app/utils/db.server.ts";
 
 export async function loader(){

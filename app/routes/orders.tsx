@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { prisma } from "#app/utils/db.server.ts";
 import ScreenView from "#app/components/screen-view.tsx";
+import { prisma } from "#app/utils/db.server.ts";
 
 export async function loader(){
     const fetchedOrders = await prisma.order.findMany({

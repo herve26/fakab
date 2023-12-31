@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import { Select, SelectItem } from "#app/components/ui/select.tsx";
 import { prisma } from "#app/utils/db.server.ts";
 
@@ -19,8 +19,6 @@ export async function loader(){
 }
 
 export default function TeamNew(){
-    const { usersCharge }  = useLoaderData<typeof loader>()
-    
     return (
         <div className="flex flex-col min-w-[40vw]">
             <h1 className="mb-5 text-3xl font-bold">Create Team</h1>

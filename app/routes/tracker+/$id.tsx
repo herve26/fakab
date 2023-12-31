@@ -1,7 +1,7 @@
-import { prisma } from "#app/utils/db.server.ts";
 import { invariantResponse } from "@epic-web/invariant";
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { prisma } from "#app/utils/db.server.ts";
 
 export async function loader({params}: LoaderFunctionArgs) {
   const id = params.id
