@@ -275,7 +275,7 @@ async function seed() {
       orderId: order1.orderId, // Assuming orders have been created already
       materialId: material1.materialId,
       orderQuantity: 100,
-      receivedData: new Date(),
+      receivedDate: new Date(),
     },
   });
   // ... create other materials and their order details similarly

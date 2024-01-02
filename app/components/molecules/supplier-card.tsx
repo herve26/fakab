@@ -1,6 +1,15 @@
 import TextLabel from './text-label.tsx';
 
-const SupplierCard = ({ supplier }) => {
+type Props = {
+    supplierName: string;
+    supplierType: string;
+    contactPerson: string | null;
+    phoneNumber: string | null;
+    email: string | null;
+    address: string | null;
+}
+
+const SupplierCard = ({ supplier }: { supplier: Props}) => {
     return (
         <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg">
             <h3 className="text-lg font-medium mb-2">{supplier.supplierName}</h3>
@@ -8,9 +17,6 @@ const SupplierCard = ({ supplier }) => {
             <TextLabel label="Contact Person" text={supplier.contactPerson}/>
             <TextLabel label="Phone Number" text={supplier.phoneNumber}/>
             <TextLabel label="Email" text={supplier.email}/>
-            {supplier.logo && (
-                <img src={supplier.logo} alt={supplier.supplierName} className="w-48 mx-auto my-4" />
-            )}
             <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-700">
                 Address: {supplier.address}

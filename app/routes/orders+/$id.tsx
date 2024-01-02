@@ -53,7 +53,7 @@ export default function OrderDetail(){
                 </div>
             </div>
 
-            {order.supplier?.supplierType === "MERCHANT" && <MerchantOrderDetail details={order.details} />}
+            {order.supplier?.supplierType === "MERCHANT" && <MerchantOrderDetail details={order.details.map(det => ({materialName: det.material.materialName, unitPrice: det.unitPrice, quantity: det.orderQuantity}))} />}
             {order.supplier?.supplierType === "REFILL" && <RefillOrderDetail details={order.details.map(det => ({material: det.material.materialName, quantity: det.orderQuantity}))}/>}
         </div>
     )
