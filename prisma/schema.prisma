@@ -25,12 +25,6 @@ model User {
   roles       Role[]
   sessions    Session[]
   connections Connection[]
-
-  inChargeOf Team? @relation("inChargeRef", fields: [inChargeOfId], references: [id])
-  inChargeOfId Int? @unique
-
-  team Team? @relation("teamRef", fields: [teamId], references: [id])
-  teamId Int?
 }
 
 model Note {
@@ -190,17 +184,59 @@ model CustomerConnections {
 
   team Team? @relation(fields: [teamId], references: [id])
   teamId Int?
+
+  materialUsed MaterialUsed[]
+}
+
+model MaterialUsed {
+  customer CustomerConnections @relation(fields: [customerId], references: [id])
+  customerId String
+
+  material Material @relation(fields: [materialId], references: [materialId])
+  materialId Int
+
+  quantity Int
+  @@id([customerId, materialId])
+}
+
+model Employee {
+  employeeId Int @id @default(autoincrement())
+  firstName String
+  lastName String
+  email String @unique
+  startDate DateTime
+  endDate DateTime?
+  
+  inChargeOf Team? @relation("inChargeRef", fields: [inChargeOfId], references: [id])
+  inChargeOfId Int? @unique
+
+  team Team? @relation("teamRef", fields: [teamId], references: [id])
+  teamId Int?
 }
 
 model Team {
   id      Int      @id @default(autoincrement())
   name    String
 
-  inCharge User? @relation("inChargeRef")
+  inCharge Employee? @relation("inChargeRef")
 
-  members User[] @relation("teamRef")
+  members Employee[] @relation("teamRef")
 
   connections CustomerConnections[]
+
+  teamMaterials TeamMaterials[]
+}
+
+model TeamMaterials {
+  team Team @relation(fields: [teamId], references: [id])
+  teamId Int
+
+  material Material @relation(fields: [materialId], references: [materialId])
+  materialId Int
+
+  quantity Int
+  
+  @@id([teamId, materialId])
 }
 
 model Material {
@@ -213,6 +249,10 @@ model Material {
   materialUnitCode String
 
   orderDetail OrderDetail[]
+
+  teamMaterial TeamMaterials[]
+
+  customerMaterial MaterialUsed[]
 }
 
 model MaterialUnit {
@@ -225,18 +265,38 @@ model MaterialUnit {
 model Order {
   orderId Int @id @default(autoincrement())
   orderDate DateTime
+  status String @default("PENDING")
 
   details OrderDetail[]
+
+  supplier Supplier? @relation(fields: [supplierId], references: [supplierId])
+  supplierId Int?
+
 }
 
 model OrderDetail {
   orderDetailId Int @id @default(autoincrement())
   orderQuantity Int
-  receivedData DateTime
+  receivedDate DateTime?
 
   order Order @relation(fields: [orderId], references: [orderId])
   orderId Int
 
   material Material @relation(fields: [materialId], references: [materialId])
   materialId Int
+
+  unitPrice Decimal?
+}
+
+model Supplier {
+  supplierId Int @id @default(autoincrement())
+  supplierName String
+  contactPerson String?
+  phoneNumber String?
+  email String?
+  address String?
+
+  supplierType String @default("MERCHANT") // Changed to String
+
+  orders Order[]
 }

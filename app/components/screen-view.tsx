@@ -1,16 +1,18 @@
 import { Link } from "@remix-run/react";
 import { type ReactNode } from "react";
+import { cn } from "#app/utils/misc.tsx";
 import { Icon } from "./ui/icon.tsx";
 
 type Props = {
     heading: string;
     link: string;
-    children: ReactNode
+    children: ReactNode,
+    className?: string
 }
 
-export default function ScreenView({heading, link, children}: Props){
+export default function ScreenView({heading, link, children, className}: Props){
     return (
-        <div className="grow">
+        <div className={cn("grow", className)}>
             <div className="w-full">
                 <div className="flex space-x-4">
                     <h1 className="text-2xl font-bold">{heading}</h1>

@@ -8,7 +8,7 @@ export async function action(){
 }
 
 export async function loader(){
-    const usersCharge = await prisma.user.findMany({
+    const usersCharge = await prisma.employee.findMany({
         where: {
             inChargeOf: null,
             teamId: null

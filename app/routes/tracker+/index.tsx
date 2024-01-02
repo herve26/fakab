@@ -1,56 +1,116 @@
-import { json } from '@remix-run/node';
-import { Link, useLoaderData } from '@remix-run/react';
+import { parse } from '@conform-to/zod';
+import { type ActionFunctionArgs, json } from '@remix-run/node';
+import { Link, useFetcher, useLoaderData } from '@remix-run/react';
+import { format } from 'date-fns';
+import { z } from 'zod';
+import { Dialog, DialogContent, DialogTrigger } from '#app/components/dialog.tsx';
+import InputLabel from '#app/components/molecules/input-label.tsx';
+import MaterialAdd from '#app/components/molecules/material-add.tsx';
+import TextLabel from '#app/components/molecules/text-label.tsx';
+import { Button } from '#app/components/ui/button.tsx';
 import { prisma } from '#app/utils/db.server.ts';
 
+const materialSchema = z.object({
+	id: z.number(),
+	quantity: z.number()
+})
+const schema = z.object({
+	id: z.string(),
+	completion_date: z.date(),
+	material: z.array(materialSchema)
+})
+
+export async function action({request}: ActionFunctionArgs){
+	const formData = await request.formData()
+	const submission = parse(formData, { schema })
+	
+	console.log(submission)
+
+	if(!submission.value){
+        return json({status: "error", submission}, {status: 404})
+    }
+
+	try {
+		await prisma.customerConnections.update({
+			where: {
+				id: submission.value.id
+			},
+			data: {
+				completion_date: submission.value.completion_date,
+				materialUsed: {
+					create: submission.value.material.map(s => ({
+						material: { connect: { materialId: s.id }},
+						quantity: s.quantity
+					}))
+				}
+			}
+		})
+	} catch(e){
+		return json({status: "Error", submission}, {status: 500})
+	}
+
+	return null
+}
 
 export async function loader() {
   const connections = await prisma.customerConnections.findMany()
-  return json({connections});
+  const materials = await prisma.material.findMany({
+	select:{
+		materialCode: true,
+		materialName: true,
+		materialId: true
+	}
+  })
+  return json({connections, materials});
 }
 
-export default function CustomerConnections() {
-  let { connections } = useLoaderData<typeof loader>();
+function CustomerConnectionsList() {
+  	const { connections, materials } = useLoaderData<typeof loader>();
+  	const fetcher = useFetcher()
 
-  return (
-    <div className="flex flex-col">
-      <div className='px-8 mb-5 flex items-center'>
-        <h1 className="text-3xl font-bold text-primary">Customer Connections</h1>
-        <Link to="new" className='text-3xl font-bold text-primary px-2 py-1 ml-6 border-2 border-primary'>+</Link>
-      </div>
-      <div className="overflow-x-auto">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SO</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completion Date</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {connections.map((item) => (
-                  <tr key={item.id}>
-                    <td className="px-2 py-4 whitespace-nowrap">{item.so}</td>
-                    <td className="px-2 py-4 whitespace-nowrap">{item.customer_details}</td>
-                    <td className="px-2 py-4 whitespace-nowrap">{item.customer_contact}</td>
-                    <td className="px-2 py-4 whitespace-nowrap">{item.customer_address}</td>
-                    <td className="px-2 py-4 whitespace-nowrap">{item.area}</td>
-                    <td className="px-2 py-4 whitespace-nowrap">{item.completion_date}</td>
-                    <td className="px-2 py-4 whitespace-nowrap">{item.teamId}</td>
-                    <td className="px-2 py-4 whitespace-nowrap"><Link to={`${item.id}`}>E</Link></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<div className='px-8 py-6'>
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+				{connections.map((connection) => (
+					<div key={connection.id} className="border border-slate-200 bg-white rounded-lg shadow-md p-4">
+						<div className="flex items-center justify-between pb-4 mb-4 border-b-2 border-slate-200">
+							<h3 className="text-lg font-bold mb-2">{connection.so}</h3>
+							<Dialog>
+								<DialogTrigger asChild>
+									<button className='bg-green-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm'>DONE</button>
+								</DialogTrigger>
+								<DialogContent>
+									<fetcher.Form method="POST">
+										<input type="hidden" name="id" value={connection.id}/>
+										<InputLabel type="date" label="Completion Date" name="completion_date"/>
+										<MaterialAdd materials={materials}/>
+										<Button type='submit'>Add Material</Button>
+									</fetcher.Form>
+								</DialogContent>
+							</Dialog>
+						</div>
+						<div className='grid grid-cols-2 gap-2'>
+							<TextLabel label="Customer" text={connection.customer_details}/>
+							<TextLabel label="Area" text={connection.area}/>
+							<TextLabel label="Connection Type" text={connection.connection_type}/>
+							<TextLabel label="Assignment Date" text={format(new Date(connection.assignement_date), "dd-MMM-yyyy")}/>
+							{connection.completion_date && (
+								<TextLabel label="Completion Date" text={format(new Date(connection.completion_date), "dd-MMM-yyyy")}/>
+							)}
+						</div>
+						<div className="flex justify-start mt-4 pt-4 border-t-2 border-slate-200">
+							<Link to={`${connection.id}`} className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+								Details
+							</Link>
+							<button className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-bold py-2 px-4 rounded ml-2">
+								Edit
+							</button>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
 }
+
+export default CustomerConnectionsList;

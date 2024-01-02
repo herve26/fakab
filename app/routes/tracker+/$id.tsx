@@ -1,6 +1,8 @@
 import { invariantResponse } from "@epic-web/invariant";
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { Dialog, DialogContent, DialogTrigger } from "#app/components/dialog.tsx";
+import Table from "#app/components/table.tsx";
 import { prisma } from "#app/utils/db.server.ts";
 
 export async function loader({params}: LoaderFunctionArgs) {
@@ -8,20 +10,30 @@ export async function loader({params}: LoaderFunctionArgs) {
   invariantResponse(id, 'Must Provide a connection ID', {status: 404})
   
   const customerConnection = await prisma.customerConnections.findUnique({
-    where: { id }
+    where: { id },
+    include: {
+      materialUsed: {
+        select: {
+          quantity: true,
+          material: {
+            select: {
+              materialCode: true,
+              materialName: true
+            }
+          }
+        }
+      }
+    }
   })
 
-  const materials = [{id: 0, name: 'pigtail'}]
-
   invariantResponse(customerConnection, 'Connection Not Found', { status: 404 })
-  invariantResponse(materials, 'Materials For Connection Not Found', {status: 404})
-  
-    return json({customerConnection, materials});
-  }
+
+  return json({customerConnection});
+}
 
 export default function TrackerID(){
-    const {customerConnection, materials} = useLoaderData<typeof loader>()
-
+    const { customerConnection } = useLoaderData<typeof loader>()
+    const materials = customerConnection.materialUsed.map(mat => [mat.material.materialCode, mat.material.materialName, mat.quantity])
     return (
         <div className="flex flex-col space-y-4 px-6">
           <h1 className="mb-5 text-3xl font-bold">Customer Connection</h1>
@@ -64,14 +76,19 @@ export default function TrackerID(){
           </div>
           <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6 bg-primary">
-              <h2 className="text-lg leading-6 font-medium text-white">Materials Used</h2>
+				<div className="flex space-x-5">
+					<h2 className="text-lg leading-6 font-medium text-white">Materials Used</h2>
+					<Dialog>
+						<DialogTrigger>+</DialogTrigger>
+						<DialogContent>Add Material Used</DialogContent>
+					</Dialog>
+				</div>
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-              <ul className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                {materials.map((material) => (
-                  <li key={material.id} className="text-sm text-gray-900">{material.name}</li>
-                ))}
-              </ul>
+			        <Table
+                    headers={["Material Code", "Material Name", "Qty Used"]}
+                    children={materials}
+                />
             </div>
           </div>
           <div className="bg-white shadow overflow-hidden sm:rounded-lg">

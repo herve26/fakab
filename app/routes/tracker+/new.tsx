@@ -7,7 +7,7 @@ import { prisma } from "#app/utils/db.server.ts";
 const schema = z.object({
     so: z.string().max(20, "Customer SO# cannot have more than 20 Charater"),
     customer_details: z.string(),
-    customer_contact: z.string().length(10),
+    customer_contact: z.string().min(10).max(15),
     customer_address: z.string(),
     area: z.string(),
     geo_localization: z.string(),
@@ -20,6 +20,7 @@ export async function action({ request }: ActionFunctionArgs){
     const submission = parse(formData, {schema})
 
     if(!submission.value){
+        console.log(submission)
         return json({status: "error", submission}, {status: 404})
     }
 

@@ -1,56 +1,54 @@
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useLocation, useParams } from "@remix-run/react";
+import OrderCard from "#app/components/molecules/order-card.tsx";
 import ScreenView from "#app/components/screen-view.tsx";
 import { prisma } from "#app/utils/db.server.ts";
 
 export async function loader(){
-    const fetchedOrders = await prisma.order.findMany({
+    const orders = await prisma.order.findMany({
         include: {
-          details: {
-            include: {
-              material: {
-                select: { materialName: true, materialCode: true, materialUnit: true },
-              },
-            },
+          supplier: {
+            select: {
+              supplierName: true,
+              supplierType: true
+            }
           },
+          _count: {
+            select: {
+              details: true
+            }
+          }
         },
       });
 
-      return json({orders: fetchedOrders})
+      return json({orders})
 }
 
 function Orders() {
     const { orders } = useLoaderData<typeof loader>()
+  const params = useParams()
+  const location = useLocation()
+
+  const isCol2 = location.pathname.split("/").length === 3
+  
   return (
-    <ScreenView heading="Orders" link="new">
-        <div className="container mx-auto p-4">
-      <table className="table-auto w-full">
-        <thead>
-          <tr className="border-b">
-            <th className="px-4 py-2">Order ID</th>
-            <th className="px-4 py-2">Order Date</th>
-            <th className="px-4 py-2">Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map((order) => (
-            <tr key={order.orderId} className="border-b hover:bg-gray-100">
-              <td className="px-4 py-2">{order.orderId}</td>
-              <td className="px-4 py-2">{order.orderDate}</td>
-              <td className="px-4 py-2">
-                <ul>
-                  {order.details.map((detail) => (
-                    <li key={detail.orderDetailId} className="mb-2">
-                      {detail.material.materialName} ({detail.material.materialCode}) x{detail.orderQuantity} {detail.material.materialUnit.unitName}
-                    </li>
-                  ))}
-                </ul>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ScreenView heading="Orders" link="new" className="px-8 py-4">
+      <div className="flex mt-4">
+        <div className={`w-full grid gap-4 ${isCol2 ? "grid-cols-2" : "grid-cols-3"}`}>
+            {orders.map(order => (
+              <OrderCard
+                key={order.orderId}
+                orderId={order.orderId}
+                orderDate={order.orderDate}
+                status={order.status}
+                supplier={order.supplier?.supplierName}
+                items={order._count.details}
+                selected={params.id ? parseInt(params.id) === order.orderId : false }
+              />
+            ))}
+          </div>
+          <Outlet/>
+      </div>
     </ScreenView>
   );
 }
