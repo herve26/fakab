@@ -69,7 +69,7 @@ function CustomerConnectionsList() {
   	const fetcher = useFetcher()
 
 	return (
-		<div className='px-8 py-6'>
+		<div className='px-8 py-6  h-full'>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{connections.map((connection) => (
 					<div key={connection.id} className="border border-slate-200 bg-white rounded-lg shadow-md p-4">
@@ -105,10 +105,17 @@ function CustomerConnectionsList() {
 							<button className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-bold py-2 px-4 rounded ml-2">
 								Edit
 							</button>
+							<Link reloadDocument to={`${connection.id}/pdf`} className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2'>PDF</Link>
 						</div>
 					</div>
 				))}
 			</div>
+			{connections.length === 0 && <div className='flex flex-col items-center justify-center h-full'>
+				<h3 className='text-lg font-bold'>No Connection</h3>
+				<Link to='new' className='bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2'>
+					Add Connection
+				</Link>
+			</div>}
 		</div>
 	);
 }

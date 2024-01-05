@@ -300,3 +300,27 @@ model Supplier {
 
   orders Order[]
 }
+
+model Template {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  type        String?   // Optional type for categorizing templates
+  content     String?   // Optional for storing template content directly
+  resources   Resource[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Resource {
+  id          Int       @id @default(autoincrement())
+  name        String
+  contentType String?
+  size        Int?
+  // Use a String to accommodate various file paths and storage options
+  path        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  template    Template? @relation(fields: [templateId], references: [id])
+  templateId  Int?
+}

@@ -10,7 +10,7 @@ type CardProps = {
     icon?: IconName;
 }
 
-function Card({to, children, icon}: CardProps){
+export function Card({to, children, icon}: CardProps){
     return(
         <Link to={to} className="bg-white rounded-md border hover:shadow-md text-2xl flex items-center justify-center py-12">
             <div className="flex gap-x-2">
@@ -31,6 +31,7 @@ export default function IndexRoute(){
             <Card to="orders">Orders</Card>
             <Card to="employees">Employees</Card>
             <Card to="suppliers">Suppliers</Card>
+            <Card to="templates">Templates</Card>
         </div>
     )
 }

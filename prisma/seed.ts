@@ -289,6 +289,43 @@ async function seed() {
   console.timeEnd(' Seeding materials, material units, orders, and order details...');
 
 	console.timeEnd(`🌱 Database has been seeded`)
+
+	/* Given the following Prisma model
+	model Employee {
+  employeeId Int @id @default(autoincrement())
+  firstName String
+  lastName String
+  email String @unique
+  startDate DateTime
+  endDate DateTime?
+  
+  inChargeOf Team? @relation("inChargeRef", fields: [inChargeOfId], references: [id])
+  inChargeOfId Int? @unique
+
+  team Team? @relation("teamRef", fields: [teamId], references: [id])
+  teamId Int?
+	}
+	Write for me seed data for this Model	
+*/
+
+	await prisma.employee.create({
+		data: {
+			firstName: 'John',
+			lastName: 'Doe',
+			email: 'john.doe@example.com',
+			startDate: new Date()
+		},
+	})
+
+	await prisma.employee.create({
+		data: {
+			firstName: 'Jane',
+			lastName: 'Doe',
+			email: 'jane.doe@example.com',
+			startDate: new Date()
+		},
+	})
+	
 }
 
 seed()
