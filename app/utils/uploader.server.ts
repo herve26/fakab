@@ -11,7 +11,9 @@ type UploadStorageType = {
 }
 
 export const uploadStreamToCloudStorage = async ({filename, fileStream, makePublic=false}: UploadStorageType) => {
-  const bucketName = 'fakab-storage-bucket';
+  const bucketName = process.env["GOOGLE_CLOUD_BUCKET"]
+
+  if(!bucketName) throw new Error("Bucket Name is Required")
 
   // Create Cloud Storage client
   const cloudStorage = new Storage();

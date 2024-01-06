@@ -9,6 +9,7 @@ const schema = z.object({
     customer_details: z.string(),
     customer_contact: z.string().min(10).max(15),
     customer_address: z.string(),
+    
     area: z.string(),
     geo_localization: z.string(),
     connection_type: z.string()
@@ -51,6 +52,7 @@ export default function NewConnection(){
                 <input name="customer_address" placeholder="Address" className="block w-full p-2 border border-gray-300 rounded" />
                 <input name="area" placeholder="Area" className="block w-full p-2 border border-gray-300 rounded" />
                 <input name="geo_localization" placeholder="Geo Localization" className="block w-full p-2 border border-gray-300 rounded" />
+                <input name="assignment_date" placeholder="Assignement Date" type="date" className="block w-full p-2 border border-gray-300 rounded"/>
                 <select name="connection_type" className="block w-full p-2 border border-gray-300 rounded">
                     <option value="GPON">GPON</option>
                     <option value="MPLS">MPLS</option>

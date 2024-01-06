@@ -98,6 +98,14 @@ export default function TrackerID(){
     const requiredImagesFile = customerConnection.documentResources.filter(img => requiredImages.map(req => req.id).includes(img.tag ?? ""))
     const imagesToAdd = requiredImages.filter(img => !requiredImagesFile.map(req => req.tag).includes(img.id))
     
+    const fetcher = useFetcher()
+
+    const deleteResource = (id: number) => {
+      const formData = new FormData()
+      formData.append("id", `${id}`)
+      fetcher.submit(formData, { method: "POST", action: "/api/delete-resource"})
+    }
+
     return (
         <div className="flex flex-col space-y-4 px-6">
           <h1 className="mb-5 text-3xl font-bold">Customer Connection</h1>
@@ -183,7 +191,13 @@ export default function TrackerID(){
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
               <div className="grid grid-cols-2 gap-x-4">
-              {map_1Image ? <img src={map_1Image.url ?? ""} alt={`Detailed Map of ${customerConnection.id}`}/> : <Dialog>
+              {map_1Image ? (<div className="relative border">
+                <button
+                  className="absolute right-4 top-4 rounded-full bg-primary text-white h-8 w-8"
+                  onClick={() => deleteResource(map_1Image.id)}
+                >X</button>
+                <img src={map_1Image.url ?? ""} alt={`Detailed Map of ${customerConnection.id}`}/>
+              </div> ) : <Dialog>
                 <DialogTrigger>
                     <Button>Add Resource File</Button>
                 </DialogTrigger>
