@@ -1,10 +1,10 @@
 import { parse } from "@conform-to/zod";
 import { type ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 import { z } from "zod";
 import { Select, SelectItem } from "#app/components/ui/select.tsx";
 import { prisma } from "#app/utils/db.server.ts";
-import { useState } from "react";
 
 const schema = z.object({
     name: z.string(),

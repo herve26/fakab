@@ -129,7 +129,7 @@ export async function loader({ params }: LoaderFunctionArgs){
     return new Response(pdfBytes, {
         status: 200,
         headers: {
-            "Content-Disposition": "attachment;filename=" + `acceptance_report_${connection.customer_details.replace(" ", "_")}.pdf`,
+            "Content-Disposition": `attachment;filename=acceptance_report_${connection.customer_details.replace(" ", "_")}.pdf`,
             'Content-Type': 'application/pdf',
             'Content-Length': `${pdfBytes.byteLength}`
         }
