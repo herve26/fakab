@@ -164,7 +164,7 @@ jobs:
       
       - name: Create service-account.json
         run: |
-          echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" |  base64 > service-account.json
+          echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" |  base64 -d > service-account.json
 
       - name: 🎈 Setup Fly
         uses: superfly/flyctl-actions/setup-flyctl@v1.4
