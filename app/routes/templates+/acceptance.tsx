@@ -3,7 +3,6 @@ import { Form } from "@remix-run/react";
 import { PDFDocument, type PDFField } from 'pdf-lib';
 import React, { useState, useEffect } from 'react';
 import { Button } from "#app/components/ui/button.tsx";
-import { prisma } from "#app/utils/db.server.ts";
 import { cloudStorageUploaderHandler } from '#app/utils/uploader.server.ts';
 
 
@@ -12,13 +11,6 @@ export async function action({ request }: ActionFunctionArgs) {
     const filename = formData.get('acceptance_report');
 
     if(typeof filename !== 'string') throw new Error('Invalid file type')
-
-    await prisma.resource.create({
-        data: {
-            name: "As Build - Page 1",
-            path: filename
-        }
-    })
 
     return null
   

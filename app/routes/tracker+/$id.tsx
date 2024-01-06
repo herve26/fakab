@@ -95,7 +95,7 @@ export default function TrackerID(){
     const { customerConnection, requiredImages } = useLoaderData<typeof loader>()
     const materials = customerConnection.materialUsed.map(mat => [mat.material.materialCode, mat.material.materialName, mat.quantity])
     const map_1Image = customerConnection.documentResources.find(res => res.tag === "map_1")
-    const requiredImagesFile = customerConnection.documentResources.filter(img => requiredImages.map(req => req.id).includes(img.tag))
+    const requiredImagesFile = customerConnection.documentResources.filter(img => requiredImages.map(req => req.id).includes(img.tag ?? ""))
     const imagesToAdd = requiredImages.filter(img => !requiredImagesFile.map(req => req.tag).includes(img.id))
     
     return (
@@ -170,7 +170,7 @@ export default function TrackerID(){
               >{requiredImagesFile.map(image => 
                 <div key={image.id} className="border rounded-md bg-white p-3">
                   <h4>Image of {image.tag}</h4>
-                  <img key={image.id} src={image.url} alt={image.name}/>
+                  <img key={image.id} src={image.url ?? ""} alt={image.name}/>
                 </div>
                 )}
               </div>
@@ -183,7 +183,7 @@ export default function TrackerID(){
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
               <div className="grid grid-cols-2 gap-x-4">
-              {map_1Image ? <img src={map_1Image.url} alt={`Detailed Map of ${customerConnection.id}`}/> : <Dialog>
+              {map_1Image ? <img src={map_1Image.url ?? ""} alt={`Detailed Map of ${customerConnection.id}`}/> : <Dialog>
                 <DialogTrigger>
                     <Button>Add Resource File</Button>
                 </DialogTrigger>
