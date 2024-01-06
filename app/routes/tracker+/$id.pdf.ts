@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { downloadIntoMemory } from "#app/utils/cloud-storage.server.ts";
 import { prisma } from "#app/utils/db.server.ts";
+import { requiredCCImages } from "./$id.tsx";
 
 export async function loader({ params }: LoaderFunctionArgs){
     const id = params.id
@@ -12,14 +13,38 @@ export async function loader({ params }: LoaderFunctionArgs){
     const connection = await prisma.customerConnections.findUnique({
         where: {
             id: id
+        },
+        include:{
+            documentResources: true
+        }
+    })
+
+    const templateDoc = await prisma.documentTemplate.findUnique({
+        where: {
+            documentCode: 'liquid_CC_ACC'
+        },
+        include: {
+            templateDocument: true
         }
     })
 
     invariantResponse(connection, "Connection not found")
+    invariantResponse(templateDoc, "Template Document is Required")
+    invariantResponse(templateDoc.templateDocument, "Template Document Resource is Required")
 
-    const pdfBuffer = await downloadIntoMemory({fileName: "acceptance_report.pdf"});
-    const mapImage = await downloadIntoMemory({fileName: "nzinga_sante.jpg"});
-    
+    const pdfBuffer = await downloadIntoMemory({fileName: templateDoc.templateDocument.path});
+
+    const map1Res = connection.documentResources.find(res => res.tag === "map_1")
+    invariantResponse(map1Res, "Detailed Map is Required")
+    const mapImage = await downloadIntoMemory({fileName: map1Res.path});
+
+
+    const images = await Promise.all(connection.documentResources.filter(res => (
+        requiredCCImages.map(req => req.id).includes(res.tag ?? "")
+    )).map(async res => (
+        {buffer: await downloadIntoMemory({fileName: res.path}), id: res.tag }
+    )))
+
     const pdfDoc = await PDFDocument.load(pdfBuffer);
     const image = await pdfDoc.embedJpg(mapImage)
     const jpgDims = image.scale(0.17)
@@ -31,10 +56,33 @@ export async function loader({ params }: LoaderFunctionArgs){
         width: jpgDims.width,
         height: jpgDims.height
     })
+
+    // const page5 = pages[4];
+    // const pageWidth = page5.getWidth();
+    // const pageHeight = page5.getHeight();
+
+    // let x = 25;
+    // let y = pageHeight - 100; // Start from the bottom of the page
+    // let imagesPerRow = 3;
+    
     const TimeRoman = await pdfDoc.embedFont(StandardFonts.TimesRomanBold)
 
     const form = pdfDoc.getForm()
     form.updateFieldAppearances(TimeRoman)
+
+    for (let idx = 0; idx < images.length; idx++) {
+        const imageEmb = await pdfDoc.embedJpg(images[idx].buffer);
+
+        // Resize image to 300px width while maintaining aspect ratio
+        // const targetWidth = 180;
+        // const targetHeight = Math.round(imageEmb.height * (targetWidth / imageEmb.width));
+        // const dim = imageEmb.scaleToFit(targetWidth, targetHeight);
+
+        const page5_image = form.getTextField(`page5_image_${idx + 1}`)
+        page5_image.setImage(imageEmb)
+
+        
+    }
 
     const client_name = form.getTextField('client_name')
     client_name.setText(connection.customer_details.toUpperCase())
@@ -42,6 +90,9 @@ export async function loader({ params }: LoaderFunctionArgs){
 
     const completion_date = form.getTextField('completion_date')
     completion_date.setText(format(new Date(connection.completion_date ?? Date.now()), "dd/MM/yyyy"))
+
+    const page2_client_name = form.getTextField("page2_client_name")
+    page2_client_name.setText(connection.customer_details.toUpperCase())
 
     const page3_drawnby = form.getTextField('page3_drawnby')
     page3_drawnby.setText("Glodys Kabanga")

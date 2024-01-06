@@ -255,7 +255,7 @@ function App() {
 					</nav>
 				</header>
 
-				<main className="flex-1 bg-slate-50">
+				<main className="flex-1 bg-slate-200">
 					<Outlet />
 				</main>
 

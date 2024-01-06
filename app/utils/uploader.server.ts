@@ -4,14 +4,20 @@ import  { type UploadHandler } from '@remix-run/node';
 
 // Upload a file to Cloud Storage
 
-const uploadStreamToCloudStorage = async (name: string, fileName: string, fileStream: AsyncIterable<Uint8Array>) => {
+type UploadStorageType = {
+  filename: string, 
+  fileStream: AsyncIterable<Uint8Array>,
+  makePublic?: boolean
+}
+
+export const uploadStreamToCloudStorage = async ({filename, fileStream, makePublic=false}: UploadStorageType) => {
   const bucketName = 'fakab-storage-bucket';
 
   // Create Cloud Storage client
   const cloudStorage = new Storage();
 
   // Create a reference to the file.
-  const file = cloudStorage.bucket(bucketName).file(name);
+  const file = cloudStorage.bucket(bucketName).file(filename);
 
   // Create a pass through stream from a string
   const passthroughStream = new stream.PassThrough();
@@ -21,18 +27,18 @@ const uploadStreamToCloudStorage = async (name: string, fileName: string, fileSt
   passthroughStream.end();
 
   async function streamFileUpload() {
-    passthroughStream.pipe(file.createWriteStream()).on('finish', () => {
-      // The file upload is complete
+    passthroughStream.pipe(file.createWriteStream()).on('finish', async () => {
+      if(makePublic){
+        await file.makePublic()
+      }
     });
 
-    console.log(`${fileName} uploaded to ${bucketName}`);
+    console.log(`${filename} uploaded to ${bucketName}`);
   }
 
-  streamFileUpload().catch(console.error);
+  await streamFileUpload().catch(console.error);
 
-  await file.makePublic()
-
-  return file.publicUrl();
+  return makePublic ? file.publicUrl() : filename
 };
 
 export const cloudStorageUploaderHandler: UploadHandler = async ({
@@ -41,7 +47,7 @@ export const cloudStorageUploaderHandler: UploadHandler = async ({
     data,
 }) => {
     if (filename) {
-        return await uploadStreamToCloudStorage(name, filename, data);
+        return await uploadStreamToCloudStorage({filename, fileStream: data});
     }
 
     return null

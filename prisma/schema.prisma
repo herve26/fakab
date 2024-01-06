@@ -186,6 +186,8 @@ model CustomerConnections {
   teamId Int?
 
   materialUsed MaterialUsed[]
+
+  documentResources DocumentResource[]
 }
 
 model MaterialUsed {
@@ -301,26 +303,34 @@ model Supplier {
   orders Order[]
 }
 
-model Template {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  type        String?   // Optional type for categorizing templates
-  content     String?   // Optional for storing template content directly
-  resources   Resource[]
+model DocumentTemplate {
+  documentId          Int       @id @default(autoincrement())
+  documentName        String @unique
+  documentDesc String?
+  documentCode  String @unique
+  documentType        String?   // Optional type for categorizing templates
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  templateDocument DocumentResource?
 }
 
-model Resource {
+model DocumentResource {
   id          Int       @id @default(autoincrement())
   name        String
   contentType String?
   size        Int?
+  tag         String?
   // Use a String to accommodate various file paths and storage options
+  url         String?
   path        String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  template    Template? @relation(fields: [templateId], references: [id])
-  templateId  Int?
+  
+  customer    CustomerConnections? @relation(fields: [customerId], references: [id])
+  customerId  String?
+
+  documentTemplate DocumentTemplate? @relation(fields: [documentTemplateId], references: [documentId])
+  documentTemplateId Int? @unique
 }

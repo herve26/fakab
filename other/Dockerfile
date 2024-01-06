@@ -58,6 +58,10 @@ RUN echo "#!/bin/sh\nset -x\nsqlite3 \$DATABASE_URL" > /usr/local/bin/database-c
 
 WORKDIR /myapp
 
+# Create the service-account.json file using the decoded secret
+RUN --mount=type=secret,id=SERVICE_ACCOUNT_JSON \
+    base64 -d /run/secrets/service-account-json > /service-account.json
+
 COPY --from=production-deps /myapp/node_modules /myapp/node_modules
 COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
 
