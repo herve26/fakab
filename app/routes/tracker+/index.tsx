@@ -97,6 +97,7 @@ function CustomerConnectionsList() {
 							{connection.completion_date && (
 								<TextLabel label="Completion Date" text={format(new Date(connection.completion_date), "dd-MMM-yyyy")}/>
 							)}
+							<TextLabel label="Geo Localisation" text={connection.geo_localization}/>
 						</div>
 						<div className="flex justify-start mt-4 pt-4 border-t-2 border-slate-200">
 							<Link to={`${connection.id}`} className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

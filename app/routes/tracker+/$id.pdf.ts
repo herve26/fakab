@@ -1,10 +1,37 @@
 import { invariantResponse } from "@epic-web/invariant";
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import { format } from "date-fns";
-import { PDFDocument, StandardFonts } from "pdf-lib";
+import { PDFDocument, type PDFTextField, StandardFonts, type PDFFont } from "pdf-lib";
 import { downloadIntoMemory } from "#app/utils/cloud-storage.server.ts";
 import { prisma } from "#app/utils/db.server.ts";
 import { requiredCCImages } from "./$id.tsx";
+
+
+async function fillFieldWithAdaptiveFontSize(field: PDFTextField, font: PDFFont, text: string, initFontSize: number) {
+    const widgets = field.acroField.getWidgets();
+  
+    // Get the field's bounding box from its widgets
+    const bbox = widgets[0].getRectangle(); // Assuming a single widget for simplicity
+    const fieldWidth = bbox.width;
+  
+    let fontSize = initFontSize
+    while (true) {
+      const width = font.widthOfTextAtSize(text, fontSize);
+  
+      if (width <= fieldWidth) {
+        break;
+      }
+  
+      fontSize--;
+    }
+
+    console.log(fontSize)
+  
+    // Set the font size and text
+    field.setFontSize(fontSize);
+    field.setText(text)
+  }
+  
 
 export async function loader({ params }: LoaderFunctionArgs){
     const id = params.id
@@ -73,15 +100,8 @@ export async function loader({ params }: LoaderFunctionArgs){
     for (let idx = 0; idx < images.length; idx++) {
         const imageEmb = await pdfDoc.embedJpg(images[idx].buffer);
 
-        // Resize image to 300px width while maintaining aspect ratio
-        // const targetWidth = 180;
-        // const targetHeight = Math.round(imageEmb.height * (targetWidth / imageEmb.width));
-        // const dim = imageEmb.scaleToFit(targetWidth, targetHeight);
-
         const page5_image = form.getTextField(`page5_image_${idx + 1}`)
         page5_image.setImage(imageEmb)
-
-        
     }
 
     const client_name = form.getTextField('client_name')
@@ -92,7 +112,9 @@ export async function loader({ params }: LoaderFunctionArgs){
     completion_date.setText(format(new Date(connection.completion_date ?? Date.now()), "dd/MM/yyyy"))
 
     const page2_client_name = form.getTextField("page2_client_name")
-    page2_client_name.setText(connection.customer_details.toUpperCase())
+    page2_client_name.updateAppearances(TimeRoman)
+    
+    fillFieldWithAdaptiveFontSize(page2_client_name, TimeRoman, connection.customer_details.toUpperCase(), 8)
 
     const page3_drawnby = form.getTextField('page3_drawnby')
     page3_drawnby.setText("Glodys Kabanga")
