@@ -34,8 +34,8 @@ export const requiredCCMDUImages = [
   {id: "signal_origin", label: "Prise de Signal(Poteaux)"},
   {id: "MDU", label: "Image MDU"},
   {id: "lovage_jb", label: "Lovage Join Box"},
-  {id: "path_cable", label: "Path Cable"},
-  {id: "path_cable_2", label: "Path Cable"}
+  {id: "path_cable_mdu", label: "Path Cable"},
+  {id: "path_cable_2_mdu", label: "Path Cable"}
 ]
 
 
@@ -47,7 +47,7 @@ export async function action({params, request}: ActionFunctionArgs){
 
   const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(async ({name, filename, data}) => {
     if(name !== "resource") return undefined;
-    path = `${id}/${filename}`
+    path = `${id}/${Date.now()}_${filename}`
     return await uploadStreamToCloudStorage({filename: path, fileStream: data, makePublic: true})
   }, unstable_createMemoryUploadHandler()));
 

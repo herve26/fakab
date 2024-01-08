@@ -9,7 +9,7 @@ const schema = z.object({
     customer_details: z.string(),
     customer_contact: z.string().min(10).max(15),
     customer_address: z.string(),
-    has_mdu: z.boolean(),
+    has_mdu: z.boolean().optional(),
     area: z.string(),
     geo_localization: z.string(),
     connection_type: z.string()
@@ -31,6 +31,7 @@ export async function action({ request }: ActionFunctionArgs){
             customer_details: submission.value.customer_details,
             customer_address: submission.value.customer_address,
             customer_contact: submission.value.customer_contact,
+            has_mdu: submission.value.has_mdu,
             area: submission.value.area,
             geo_localization: submission.value.geo_localization,
             connection_type: submission.value.connection_type

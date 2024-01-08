@@ -19,7 +19,7 @@ export const uploadStreamToCloudStorage = async ({filename, fileStream, makePubl
   const cloudStorage = new Storage();
 
   // Create a reference to the file.
-  const file = cloudStorage.bucket(bucketName).file(`${filename}_${Date.now()}`);
+  const file = cloudStorage.bucket(bucketName).file(filename);
 
   // Create a pass through stream from a string
   const passthroughStream = new stream.PassThrough();
