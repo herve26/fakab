@@ -5,7 +5,7 @@ import { useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 import CustomerDetailInfo from "#app/components/customer-detail-info.tsx";
 import CustomerRequiredImages from "#app/components/customer-images.tsx";
-import CustomerMapsUpload from "#app/components/customer-maps-upload.tsx";
+import CustomerMapsUpload, { ResourceUpload } from "#app/components/customer-maps-upload.tsx";
 import { Dialog, DialogContent, DialogTrigger } from "#app/components/dialog.tsx";
 import Table from "#app/components/table.tsx";
 import { prisma } from "#app/utils/db.server.ts";
@@ -122,12 +122,13 @@ export default function TrackerID(){
     const requiredImagesFile = customerConnection.documentResources.filter(img => requiredImages.map(req => req.id).includes(img.tag ?? ""))
     const imagesToAdd = requiredImages.filter(img => !requiredImagesFile.map(req => req.tag).includes(img.id))
 
-
     const requiredImagesFileMDU = customerConnection.documentResources.filter(img => requiredMDUImages.map(req => req.id).includes(img.tag ?? ""))
     const imagesToAddMDU = requiredMDUImages.filter(img => !requiredImagesFileMDU.map(req => req.tag).includes(img.id))
 
+    const survey = customerConnection.documentResources.find(res => res.tag === "survey_sheet")
+
     return (
-        <div className="flex flex-col space-y-4 px-6">
+        <div className="flex flex-col space-y-4 px-6 mb-6">
           <h1 className="mb-5 text-3xl font-bold">Customer Connection</h1>
           <CustomerDetailInfo connection={customerConnection}/>
 
@@ -163,8 +164,25 @@ export default function TrackerID(){
           />}
 
           {customerConnection.has_mdu && <CustomerRequiredImages
-            imagesToAdd={imagesToAddMDU} uploadedImagesFile={requiredImagesFileMDU} mdu
+            imagesToAdd={imagesToAddMDU}
+            uploadedImagesFile={requiredImagesFileMDU}
+            mdu
           />}
+
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+            <div className="px-4 py-5 sm:px-6 bg-primary">
+              <div className="flex space-x-5">
+                <h2 className="text-lg leading-6 font-medium text-white">Survey Sheet</h2>
+              </div>
+            </div>
+            <div className="p-4">
+            <ResourceUpload
+                doc={{resource: survey, tag: "survey_sheet"}}
+                customerID={customerConnection.id}
+                title="Survey Sheet"
+              />
+            </div>
+          </div>
         </div>
       );
 }

@@ -1,6 +1,6 @@
 import { invariantResponse } from "@epic-web/invariant";
 import { format } from "date-fns";
-import { PDFDocument, type PDFTextField, StandardFonts, type PDFFont } from "pdf-lib";
+import { PDFDocument, type PDFTextField, StandardFonts, type PDFFont, PageSizes } from "pdf-lib";
 import { requiredCCImages, requiredCCMDUImages } from "#app/routes/tracker+/$id.tsx";
 import { downloadIntoMemory } from "#app/utils/cloud-storage.server.ts";
 import { prisma } from "#app/utils/db.server.ts";
@@ -122,6 +122,17 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
 
     const page6_client_name = form.getTextField("page6_client_name")
     page6_client_name.setText(`${connection.customer_details.toUpperCase()}${mdu ? " MDU" : ""}`)
+
+    if(!mdu){
+        const survey_sheet = connection.documentResources.find(res => res.tag === "survey_sheet")
+        if(survey_sheet){
+            const sheet = await downloadIntoMemory({fileName: survey_sheet.path});
+            const last_page = pdfDoc.addPage(PageSizes.A4)
+            const sheet_image = await pdfDoc.embedJpg(sheet)
+            last_page.drawImage(sheet_image)
+        }
+        
+    }
 
     form.flatten()
 

@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTrigger } from "./dialog.tsx";
 import InputLabel from "./molecules/input-label.tsx";
 import { Button } from "./ui/button.tsx";
 
-type Map = {
+type ResourceUploadProp = {
     resource: {
         id: number;
         name: string;
@@ -17,10 +17,10 @@ type Map = {
         customerId: string | null;
         documentTemplateId: number | null;
     } | null | undefined,
-    tag: string
+    tag: string,
 }
 
-function MapUpload({map, customerID}: {map: Map, customerID: string}){
+export function ResourceUpload({doc, customerID, title}: {doc: ResourceUploadProp, customerID: string, title: string}){
     const fetcher = useFetcher()
 
     const deleteResource = (id: number) => {
@@ -31,23 +31,23 @@ function MapUpload({map, customerID}: {map: Map, customerID: string}){
 
     return (
         <div>
-            {map.resource && (<div className="relative border">
+            {doc.resource && (<div className="relative border">
                 <button
                     className="absolute right-4 top-4 rounded-full bg-primary text-white h-8 w-8"
-                    onClick={() => map.resource && deleteResource(map.resource.id)}
+                    onClick={() => doc.resource && deleteResource(doc.resource.id)}
                 >X</button>
-                {map.resource.url && <img src={map.resource.url} alt={`Detailed Map of ${customerID}`}/>}
+                {doc.resource.url && <img src={doc.resource.url} alt={title}/>}
             </div> )}
-            {!map.resource && <Dialog>
+            {!doc.resource && <Dialog>
                 <DialogTrigger>
                     <Button>Add Resource File</Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <h3 className="w-full mb-4 text-lg font-bold text-center text-primary">Detailed Map Resource</h3>
+                    <h3 className="w-full mb-4 text-lg font-bold text-center text-primary">Detailed doc Resource</h3>
                     <Form method="POST" encType="multipart/form-data">
                         <InputLabel label="Document's Name" type="text" name="name"/>
                         <InputLabel label="Document 📄 Resource" type="file" name="resource"/>
-                        <input type="hidden" value={map.tag} name="tag"/>
+                        <input type="hidden" value={doc.tag} name="tag"/>
                         <Button>Create Resource</Button>
                     </Form>
                 </DialogContent>
@@ -58,7 +58,7 @@ function MapUpload({map, customerID}: {map: Map, customerID: string}){
 
 
 type Props = {
-    maps: Map[];
+    maps: ResourceUploadProp[];
     customerID: string;
     mdu?: boolean;
 }
@@ -72,8 +72,8 @@ export default function CustomerMapsUpload({maps, customerID, mdu=false}: Props)
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
                 <div className="grid grid-cols-2 gap-x-4">
-                    <MapUpload map={maps[0]} customerID={customerID}/>
-                    <MapUpload map={maps[1]} customerID={customerID}/>
+                    <ResourceUpload doc={maps[0]} customerID={customerID} title={"Detailed Customer Map"}/>
+                    <ResourceUpload doc={maps[1]} customerID={customerID} title="Drawn Customer Map"/>
               </div>
             </div>
           </div>
