@@ -123,15 +123,12 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     const page6_client_name = form.getTextField("page6_client_name")
     page6_client_name.setText(`${connection.customer_details.toUpperCase()}${mdu ? " MDU" : ""}`)
 
-    if(!mdu){
-        const survey_sheet = connection.documentResources.find(res => res.tag === "survey_sheet")
-        if(survey_sheet){
-            const sheet = await downloadIntoMemory({fileName: survey_sheet.path});
-            const last_page = pdfDoc.addPage(PageSizes.A4)
-            const sheet_image = await pdfDoc.embedJpg(sheet)
-            last_page.drawImage(sheet_image)
-        }
-        
+    const survey_sheet = connection.documentResources.find(res => res.tag === (mdu ? "survey_sheet_mdu" : "survey_sheet"))
+    if(survey_sheet){
+        const sheet = await downloadIntoMemory({fileName: survey_sheet.path});
+        const last_page = pdfDoc.addPage(PageSizes.A4)
+        const sheet_image = await pdfDoc.embedJpg(sheet)
+        last_page.drawImage(sheet_image)
     }
 
     form.flatten()
