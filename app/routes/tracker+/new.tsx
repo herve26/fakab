@@ -9,7 +9,7 @@ const schema = z.object({
     customer_details: z.string(),
     customer_contact: z.string().min(10).max(15),
     customer_address: z.string(),
-    
+    has_mdu: z.boolean(),
     area: z.string(),
     geo_localization: z.string(),
     connection_type: z.string()
@@ -57,6 +57,10 @@ export default function NewConnection(){
                     <option value="GPON">GPON</option>
                     <option value="MPLS">MPLS</option>
                 </select>
+                <label className="block w-full p-2 border border-gray-300 rounded space-x-3">
+                    <input name="has_mdu" placeholder="Connection With MDU?" type="checkbox" className="mr-4"/>
+                    Has MDU?
+                </label>
             </div>
             <div className="sm:max-w-[50%] mx-auto">
                 <button type="submit" className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-blue-700">Submit</button>

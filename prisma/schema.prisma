@@ -178,7 +178,7 @@ model CustomerConnections {
   area String
   geo_localization String
   connection_type String
-
+  has_mdu Boolean @default(false)
   assignement_date DateTime @default(now())
   completion_date DateTime?
 

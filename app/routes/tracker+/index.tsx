@@ -75,6 +75,19 @@ function CustomerConnectionsList() {
 					<div key={connection.id} className="border border-slate-200 bg-white rounded-lg shadow-md p-4">
 						<div className="flex items-center justify-between pb-4 mb-4 border-b-2 border-slate-200">
 							<h3 className="text-lg font-bold mb-2">{connection.so}</h3>
+							{connection.has_mdu && <div className="border border-primary rounded-xl text-primary text-sm px-3 py-2">MDU</div>}
+						</div>
+						<div className='grid grid-cols-2 gap-2'>
+							<TextLabel label="Customer" text={connection.customer_details}/>
+							<TextLabel label="Area" text={connection.area}/>
+							<TextLabel label="Connection Type" text={connection.connection_type}/>
+							<TextLabel label="Assignment Date" text={format(new Date(connection.assignement_date), "dd-MMM-yyyy")}/>
+							{connection.completion_date && (
+								<TextLabel label="Completion Date" text={format(new Date(connection.completion_date), "dd-MMM-yyyy")}/>
+							)}
+							<TextLabel label="Geo Localisation" text={connection.geo_localization}/>
+						</div>
+						<div className="flex justify-between mt-4 pt-4 border-t-2 border-slate-200">
 							<Dialog>
 								<DialogTrigger asChild>
 									<button className='bg-green-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm'>DONE</button>
@@ -88,25 +101,16 @@ function CustomerConnectionsList() {
 									</fetcher.Form>
 								</DialogContent>
 							</Dialog>
-						</div>
-						<div className='grid grid-cols-2 gap-2'>
-							<TextLabel label="Customer" text={connection.customer_details}/>
-							<TextLabel label="Area" text={connection.area}/>
-							<TextLabel label="Connection Type" text={connection.connection_type}/>
-							<TextLabel label="Assignment Date" text={format(new Date(connection.assignement_date), "dd-MMM-yyyy")}/>
-							{connection.completion_date && (
-								<TextLabel label="Completion Date" text={format(new Date(connection.completion_date), "dd-MMM-yyyy")}/>
-							)}
-							<TextLabel label="Geo Localisation" text={connection.geo_localization}/>
-						</div>
-						<div className="flex justify-start mt-4 pt-4 border-t-2 border-slate-200">
 							<Link to={`${connection.id}`} className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
 								Details
 							</Link>
-							<button className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-bold py-2 px-4 rounded ml-2">
+							<button className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-bold py-2 px-4 rounded">
 								Edit
 							</button>
-							<Link reloadDocument to={`${connection.id}/pdf`} className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2'>PDF</Link>
+							{!connection.has_mdu && <button
+								className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+								onClick={() => fetcher.submit("", { method: "POST", action: `/tracker/${connection.id}/mdu`})}>MDU</button>}
+							<Link reloadDocument to={`${connection.id}/pdf`} className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>PDF</Link>
 						</div>
 					</div>
 				))}

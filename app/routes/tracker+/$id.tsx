@@ -95,6 +95,7 @@ export default function TrackerID(){
     const { customerConnection, requiredImages } = useLoaderData<typeof loader>()
     const materials = customerConnection.materialUsed.map(mat => [mat.material.materialCode, mat.material.materialName, mat.quantity])
     const map_1Image = customerConnection.documentResources.find(res => res.tag === "map_1")
+    const map_2Image = customerConnection.documentResources.find(res => res.tag === "map_2")
     const requiredImagesFile = customerConnection.documentResources.filter(img => requiredImages.map(req => req.id).includes(img.tag ?? ""))
     const imagesToAdd = requiredImages.filter(img => !requiredImagesFile.map(req => req.tag).includes(img.id))
     
@@ -207,6 +208,26 @@ export default function TrackerID(){
                         <InputLabel label="Document's Name" type="text" name="name"/>
                         <InputLabel label="Document 📄 Resource" type="file" name="resource"/>
                         <input type="hidden" value="map_1" name="tag"/>
+                        <Button>Create Resource</Button>
+                    </Form>
+                </DialogContent>
+              </Dialog>}
+              {map_2Image ? (<div className="relative border">
+                <button
+                  className="absolute right-4 top-4 rounded-full bg-primary text-white h-8 w-8"
+                  onClick={() => deleteResource(map_2Image.id)}
+                >X</button>
+                <img src={map_2Image.url ?? ""} alt={`Detailed Map of ${customerConnection.id}`}/>
+              </div> ) : <Dialog>
+                <DialogTrigger>
+                    <Button>Add Resource File</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <h3 className="w-full mb-4 text-lg font-bold text-center text-primary">Detailed Map Resource</h3>
+                    <Form method="POST" encType="multipart/form-data">
+                        <InputLabel label="Document's Name" type="text" name="name"/>
+                        <InputLabel label="Document 📄 Resource" type="file" name="resource"/>
+                        <input type="hidden" value="map_2" name="tag"/>
                         <Button>Create Resource</Button>
                     </Form>
                 </DialogContent>
