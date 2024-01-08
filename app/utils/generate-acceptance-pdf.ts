@@ -1,7 +1,7 @@
 import { invariantResponse } from "@epic-web/invariant";
 import { format } from "date-fns";
 import { PDFDocument, type PDFTextField, StandardFonts, type PDFFont } from "pdf-lib";
-import { requiredCCImages } from "#app/routes/tracker+/$id.tsx";
+import { requiredCCImages, requiredCCMDUImages } from "#app/routes/tracker+/$id.tsx";
 import { downloadIntoMemory } from "#app/utils/cloud-storage.server.ts";
 import { prisma } from "#app/utils/db.server.ts";
 
@@ -32,29 +32,44 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     invariantResponse(templateDoc.templateDocument, "Template Document Resource is Required")
 
     const pdfBuffer = await downloadIntoMemory({fileName: templateDoc.templateDocument.path});
-
-    const map1Res = connection.documentResources.find(res => res.tag === "map_1")
-    invariantResponse(map1Res, "Detailed Map is Required")
-    const mapImage = await downloadIntoMemory({fileName: map1Res.path});
-
-
-    const images = await Promise.all(connection.documentResources.filter(res => (
-        requiredCCImages.map(req => req.id).includes(res.tag ?? "")
-    )).map(async res => (
-        {buffer: await downloadIntoMemory({fileName: res.path}), id: res.tag }
-    )))
-
     const pdfDoc = await PDFDocument.load(pdfBuffer);
-    const image = await pdfDoc.embedJpg(mapImage)
-    const jpgDims = image.scale(0.17)
     const pages = pdfDoc.getPages()
-    const page1 = pages[2]
-    page1.drawImage(image, {
+
+    const map1Res = connection.documentResources.find(res => res.tag === (mdu ? "map_1_mdu" : "map_1"))
+    invariantResponse(map1Res, "Detailed Map is Required")
+    const map1Image = await downloadIntoMemory({fileName: map1Res.path});
+    const imageMap1 = await pdfDoc.embedJpg(map1Image)
+    const jpgDims = imageMap1.scale(0.17)
+
+    const page3 = pages[2]
+    page3.drawImage(imageMap1, {
         x: 142,
         y: 74,
         width: jpgDims.width,
         height: jpgDims.height
     })
+
+
+    const map2Res = connection.documentResources.find(res => res.tag === (mdu ? "map_2_mdu" : "map_2"))
+    invariantResponse(map2Res, "Drawn Map is Required")
+    const map2Image = await downloadIntoMemory({fileName: map2Res.path});
+    const imageMap2 = await pdfDoc.embedJpg(map2Image)
+    // const jpgDims2 = imageMap2.scale(0.17)
+
+    const page4 = pages[3]
+    page4.drawImage(imageMap2, {
+        x: 142,
+        y: 74,
+        width: jpgDims.width,
+        height: jpgDims.height
+    })
+
+    const images = await Promise.all(connection.documentResources.filter(res => (
+        mdu ? requiredCCMDUImages.map(req => req.id).includes(res.tag ?? "") : 
+        requiredCCImages.map(req => req.id).includes(res.tag ?? "") 
+    )).map(async res => (
+        {buffer: await downloadIntoMemory({fileName: res.path}), id: res.tag }
+    )))
     
     const TimeRoman = await pdfDoc.embedFont(StandardFonts.TimesRomanBold)
 
