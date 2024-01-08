@@ -104,9 +104,6 @@ function CustomerConnectionsList() {
 							<Link to={`${connection.id}`} className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
 								Details
 							</Link>
-							<button className="bg-gray-400 hover:bg-gray-500 text-gray-800 font-bold py-2 px-4 rounded">
-								Edit
-							</button>
 							{!connection.has_mdu && <button
 								className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
 								onClick={() => fetcher.submit("", { method: "POST", action: `/tracker/${connection.id}/mdu`})}>MDU</button>}

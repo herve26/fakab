@@ -127,8 +127,15 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     if(survey_sheet){
         const sheet = await downloadIntoMemory({fileName: survey_sheet.path});
         const last_page = pdfDoc.addPage(PageSizes.A4)
+        console.log("page Size", PageSizes.A4)
         const sheet_image = await pdfDoc.embedJpg(sheet)
-        last_page.drawImage(sheet_image)
+        const sheetDims = sheet_image.scale(0.35)
+        last_page.drawImage(sheet_image,{
+            x: 0,
+            y: 0,
+            width: sheetDims.width,
+            height: sheetDims.height
+        })
     }
 
     form.flatten()
