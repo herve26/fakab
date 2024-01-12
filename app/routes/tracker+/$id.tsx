@@ -26,12 +26,13 @@ export const requiredCCImages = [
   {id: "path_cable", label: "Path Cable"},
   {id: "labelling", label: "Customer Labelling"},
   {id: "signal_origin", label: "Debut Signal(MDU/JB)"},
-  {id: "path_cable_2", label: "Path Cable"}
+  {id: "path_cable_2", label: "Path Cable"},
+  {id: "path_cable_3", label: "Path Cable"}
 ]
 
 export const requiredCCMDUImages = [
   {id: "lovage_mdu", label: "Lovage MDU"},
-  {id: "signal_origin", label: "Prise de Signal(Poteaux)"},
+  {id: "origin_mdu", label: "Poteau(MDU)"},
   {id: "MDU", label: "Image MDU"},
   {id: "lovage_jb", label: "Lovage Join Box"},
   {id: "path_cable_mdu", label: "Path Cable"},

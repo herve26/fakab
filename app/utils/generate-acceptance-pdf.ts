@@ -39,14 +39,17 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     invariantResponse(map1Res, "Detailed Map is Required")
     const map1Image = await downloadIntoMemory({fileName: map1Res.path});
     const imageMap1 = await pdfDoc.embedJpg(map1Image)
-    const jpgDims = imageMap1.scale(0.17)
+    // const jpgDims = imageMap1.scale(0.17)
+    const mapDims = [652, 367]
+
+  
 
     const page3 = pages[2]
     page3.drawImage(imageMap1, {
         x: 142,
         y: 74,
-        width: jpgDims.width,
-        height: jpgDims.height
+        width: mapDims[0],
+        height: mapDims[1]
     })
 
 
@@ -60,8 +63,8 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     page4.drawImage(imageMap2, {
         x: 142,
         y: 74,
-        width: jpgDims.width,
-        height: jpgDims.height
+        width: mapDims[0],
+        height: mapDims[1]
     })
 
     const images = await Promise.all(connection.documentResources.filter(res => (

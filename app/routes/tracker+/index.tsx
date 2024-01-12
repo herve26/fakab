@@ -70,6 +70,10 @@ function CustomerConnectionsList() {
 
 	return (
 		<div className='px-8 py-6  h-full'>
+			<div className="mb-4 flex items-center space-x-4">
+				<h2 className="text-xl font-bold">Customer Connections</h2>
+				<Link to="new" className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>New</Link>
+			</div>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{connections.map((connection) => (
 					<div key={connection.id} className="border border-slate-200 bg-white rounded-lg shadow-md p-4">

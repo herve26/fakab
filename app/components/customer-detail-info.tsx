@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 
 type Props = {
     connection: {
@@ -18,8 +19,9 @@ type Props = {
 export default function CustomerDetailInfo({connection}: Props){
     return (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6 bg-primary">
+            <div className="px-4 py-5 sm:px-6 bg-primary flex items-center justify-between">
               <h2 className="text-white text-lg leading-6 font-bold">General Information</h2>
+              <Link reloadDocument to={`pdf`} className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>PDF</Link>
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
