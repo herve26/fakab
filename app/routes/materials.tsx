@@ -1,43 +1,19 @@
-import { type Material } from "@prisma/client";
+import { invariantResponse } from "@epic-web/invariant";
 import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import ScreenView from "#app/components/screen-view.tsx";
 import Table from "#app/components/table.tsx";
-import { prisma } from "#app/utils/db.server.ts";
-
-interface MaterialInStock extends Material {
-    inStock: string
-}
+import { supabaseClient } from "#app/utils/supa.server.ts";
 
 export async function loader(){
-    const materials = await prisma.$queryRaw<MaterialInStock[]>`
-        SELECT
-    m.materialId,
-    m.materialName,
-    m.materialCode,
-    m.materialDesc,
-    mu.unitName AS materialUnit,
-    SUM(od_agg.totalOrdered) AS totalOrdered,
-    COALESCE(SUM(mu.quantity), 0) AS totalUsed,
-    SUM(od_agg.totalOrdered) - COALESCE(SUM(mu.quantity), 0) AS inStock
-FROM Material m
-JOIN MaterialUnit mu ON m.materialUnitCode = mu.unitCode
-LEFT JOIN (
-    SELECT materialId, SUM(orderQuantity) AS totalOrdered
-    FROM OrderDetail
-    GROUP BY materialId
-) od_agg ON m.materialId = od_agg.materialId
-LEFT JOIN MaterialUsed mu ON m.materialId = mu.materialId
-GROUP BY m.materialId, m.materialName, m.materialCode, m.materialDesc, mu.unitName
-HAVING inStock > 0
-ORDER BY m.materialName;
-    `
+    const materials = await supabaseClient.from("material_inventory").select()
 
-    console.log(materials)
+    invariantResponse(materials.data, "Unable to Get Material")
 
-    const matArr = materials.map(mat => (
-        [mat.materialCode, mat.materialName, mat.materialUnitCode, parseInt(mat.inStock)]
-    ))
+    const matArr = materials.data.map(mat => {
+        if(!mat.material_code || !mat.material_name || !mat.materialunit) return undefined
+        return [mat.material_code, mat.material_name, mat.materialunit, mat.instock ?? 0]
+    }).filter(mat => mat !== undefined)
 
     return json({materials: matArr})
 }

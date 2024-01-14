@@ -8,7 +8,7 @@ import InputLabel from '#app/components/molecules/input-label.tsx';
 import MaterialAdd from '#app/components/molecules/material-add.tsx';
 import TextLabel from '#app/components/molecules/text-label.tsx';
 import { Button } from '#app/components/ui/button.tsx';
-import { prisma } from '#app/utils/db.server.ts';
+import { supabaseClient } from '#app/utils/supa.server.ts';
 
 const materialSchema = z.object({
 	id: z.number(),
@@ -31,20 +31,14 @@ export async function action({request}: ActionFunctionArgs){
     }
 
 	try {
-		await prisma.customerConnections.update({
-			where: {
-				id: submission.value.id
-			},
-			data: {
-				completion_date: submission.value.completion_date,
-				materialUsed: {
-					create: submission.value.material.map(s => ({
-						material: { connect: { materialId: s.id }},
-						quantity: s.quantity
-					}))
-				}
-			}
-		})
+		await supabaseClient.from("material_used").insert(submission.value.material.map(mat => ( 
+				{materialid: mat.id, quantity: mat.quantity, customerid: submission.value.id}
+		)))
+		await supabaseClient.from("customer_connection").update({
+			completion_date: submission.value.completion_date.toISOString(),
+
+		}).eq("id", submission.value.id)
+
 	} catch(e){
 		return json({status: "Error", submission}, {status: 500})
 	}
@@ -53,15 +47,13 @@ export async function action({request}: ActionFunctionArgs){
 }
 
 export async function loader() {
-  const connections = await prisma.customerConnections.findMany()
-  const materials = await prisma.material.findMany({
-	select:{
-		materialCode: true,
-		materialName: true,
-		materialId: true
-	}
-  })
-  return json({connections, materials});
+	const connections = await supabaseClient.from("customer_connection").select()
+	const materials = await supabaseClient.from("material").select()
+
+	if(!connections.data) throw new Error("Unable to Get Value")
+	if(!materials.data) throw new Error("Unable to Get Materials")
+
+  	return json({connections: connections.data, materials: materials.data});
 }
 
 function CustomerConnectionsList() {

@@ -20,7 +20,7 @@ export default function MaterialAdd({materials}: {materials: Record<string, numb
                                 Material
                             </label>
                             <Select name={`material[${idx}].id`}>
-                                {materials.map(mat => <SelectItem key={mat["materialCode"]} value={`${mat["materialId"]}`}>{mat["materialName"]}</SelectItem>)}
+                                {materials.map(mat => <SelectItem key={mat["material_code"]} value={`${mat["materialid"]}`}>{mat["material_name"]}</SelectItem>)}
                             </Select>
                         </div>
                         <InputLabel

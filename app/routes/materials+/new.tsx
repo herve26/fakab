@@ -6,7 +6,7 @@ import InputLabel from "#app/components/molecules/input-label.tsx";
 import TextareaLabel from "#app/components/molecules/textarea-label.tsx";
 import { Button } from "#app/components/ui/button.tsx";
 import { Select, SelectItem } from "#app/components/ui/select.tsx";
-import { prisma } from "#app/utils/db.server.ts";
+import { supabaseClient } from "#app/utils/supa.server.ts";
 
 const schema = z.object({
     materialCode: z.string(),
@@ -25,17 +25,11 @@ export async function action({request}: ActionFunctionArgs){
     }
 
     try{
-        await prisma.material.create({
-            data: {
-                materialCode: submission.value.materialCode,
-                materialName: submission.value.materialName,
-                materialDesc: submission.value.materialDesc,
-                materialUnit: {
-                    connect: {
-                        unitCode: submission.value.materialUnit
-                    }
-                }
-            }
+        await supabaseClient.from("Material").insert({
+            materialCode: submission.value.materialCode,
+            materialName: submission.value.materialName,
+            materialDesc: submission.value.materialDesc,
+            materialUnitCode: submission.value.materialUnit
         })
 
         return redirect("/materials")
@@ -47,15 +41,16 @@ export async function action({request}: ActionFunctionArgs){
 }
 
 export async function loader(){
-    const units = await prisma.materialUnit.findMany()
-    return json({units})
+    const units = await supabaseClient.from("MaterialUnit").select()
+    
+    return json({units: units.data ?? []})
 }
 
 export default function MaterialsNew(){
     const { units } = useLoaderData<typeof loader>()
 
     return (
-        <div className="min-w-[36vw] rounded shadow-lg p-4">
+        <div className="min-w-[36vw] rounded shadow-lg p-4 bg-white border">
             <h2 className="text-2xl font-bold mb-4">Create a new material</h2>
             <Form method="POST">
                 <InputLabel name="materialCode" label="Material Code" required/>
