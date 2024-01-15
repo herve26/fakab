@@ -5,7 +5,6 @@ import { z } from 'zod';
 import InputLabel from '#app/components/molecules/input-label.tsx';
 import MaterialAdd from '#app/components/molecules/material-add.tsx';
 import { Select, SelectItem } from '#app/components/ui/select.tsx';
-import { prisma } from '#app/utils/db.server.ts';
 import { supabaseClient } from '#app/utils/supa.server.ts';
 
 const materialSchema = z.object({
@@ -15,8 +14,8 @@ const materialSchema = z.object({
 
 const schema = z.object({
 	order_date: z.date(),
-  status: z.enum(["PENDING", "FULFILLED", "CANCELLED"]),
-  supplier: z.number(),
+  	status: z.enum(["PENDING", "FULFILLED", "CANCELLED"]),
+  	supplier: z.number(),
 	material: z.array(materialSchema)
 })
 

@@ -59,7 +59,7 @@ export async function action({params, request}: ActionFunctionArgs){
   }
 
   try {
-    await prisma.documentResource.create({
+    await prisma.document_resource.create({
       data: {
         name: parsedData.value.name,
         tag: parsedData.value.tag,
@@ -88,21 +88,21 @@ export async function loader({params}: LoaderFunctionArgs) {
   const id = params.id
   invariantResponse(id, 'Must Provide a connection ID', {status: 404})
   
-  const customerConnection = await prisma.customerConnections.findUnique({
+  const customerConnection = await prisma.customer_connection.findUnique({
     where: { id },
     include: {
-      materialUsed: {
+      materials: {
         select: {
           quantity: true,
           material: {
             select: {
-              materialCode: true,
-              materialName: true
+              material_code: true,
+              material_name: true
             }
           }
         }
       },
-      documentResources: true
+      documents: true
     }
   })
 
@@ -113,21 +113,21 @@ export async function loader({params}: LoaderFunctionArgs) {
 
 export default function TrackerID(){
     const { customerConnection, requiredImages, requiredMDUImages } = useLoaderData<typeof loader>()
-    const materials = customerConnection.materialUsed.map(mat => [mat.material.materialCode, mat.material.materialName, mat.quantity])
-    const map_1Image = customerConnection.documentResources.find(res => res.tag === "map_1")
-    const map_2Image = customerConnection.documentResources.find(res => res.tag === "map_2")
+    const materials = customerConnection.materials.map(mat => [mat.material.material_code, mat.material.material_name, mat.quantity])
+    const map_1Image = customerConnection.documents.find(res => res.tag === "map_1")
+    const map_2Image = customerConnection.documents.find(res => res.tag === "map_2")
     
-    const map_1ImageMDU = customerConnection.documentResources.find(res => res.tag === "map_1_mdu")
-    const map_2ImageMDU = customerConnection.documentResources.find(res => res.tag === "map_2_mdu")
+    const map_1ImageMDU = customerConnection.documents.find(res => res.tag === "map_1_mdu")
+    const map_2ImageMDU = customerConnection.documents.find(res => res.tag === "map_2_mdu")
 
-    const requiredImagesFile = customerConnection.documentResources.filter(img => requiredImages.map(req => req.id).includes(img.tag ?? ""))
+    const requiredImagesFile = customerConnection.documents.filter(img => requiredImages.map(req => req.id).includes(img.tag ?? ""))
     const imagesToAdd = requiredImages.filter(img => !requiredImagesFile.map(req => req.tag).includes(img.id))
 
-    const requiredImagesFileMDU = customerConnection.documentResources.filter(img => requiredMDUImages.map(req => req.id).includes(img.tag ?? ""))
+    const requiredImagesFileMDU = customerConnection.documents.filter(img => requiredMDUImages.map(req => req.id).includes(img.tag ?? ""))
     const imagesToAddMDU = requiredMDUImages.filter(img => !requiredImagesFileMDU.map(req => req.tag).includes(img.id))
 
-    const survey = customerConnection.documentResources.find(res => res.tag === "survey_sheet")
-    const survey_mdu = customerConnection.documentResources.find(res => res.tag === "survey_sheet_mdu")
+    const survey = customerConnection.documents.find(res => res.tag === "survey_sheet")
+    const survey_mdu = customerConnection.documents.find(res => res.tag === "survey_sheet_mdu")
     
     return (
         <div className="flex flex-col space-y-4 px-6 mb-6">

@@ -6,7 +6,7 @@ import { prisma } from '#app/utils/db.server.ts';
 
 export async function loader(){
     const employees = await prisma.employee.findMany()
-    const employeesArr = employees.map(emp => [emp.firstName, emp.lastName, emp.teamId ? emp.teamId : "N/A"])
+    const employeesArr = employees.map(emp => [emp.first_name, emp.last_name, emp.teamid ? emp.teamid : "N/A"])
     return json({employees: employeesArr})
 }
 

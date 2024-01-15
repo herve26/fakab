@@ -3,11 +3,11 @@ import { format } from 'date-fns';
 import TextLabel from './text-label.tsx';
 
 type Props = {
-    orderId: number;
-    orderDate: string;
-    status: string;
-    supplier?: string;
-    items: number;
+    orderId: number | null;
+    orderDate: string | null;
+    status: string | null;
+    supplier?: string | null;
+    items: number | null;
     selected: boolean;
 }
 
@@ -17,10 +17,10 @@ const OrderCard = ({ orderId, orderDate, status, supplier, items, selected }: Pr
         <div className={`p-4 bg-white rounded-lg shadow-sm hover:shadow-md ${selected ? "border-2 border-primary" : "border border-slate-200"}`}>
             <div className='flex justify-between items-center mb-4 pb-4 border-b-2 border-slate-400'>
                 <h3 className="text-lg font-medium ">Order #{orderId}</h3>
-                <span className={`px-3 py-2 text-white rounded-md  ${statusStyle[status]} inline-block`}>{status}</span>
+                <span className={`px-3 py-2 text-white rounded-md  ${statusStyle[status ? status : 0]} inline-block`}>{status}</span>
             </div>
             <div className='grid grid-cols-2 gap-2'>
-                <TextLabel label="Date" text={format(new Date(orderDate), "dd-MMM-yyyy")}/>
+                <TextLabel label="Date" text={format(orderDate ? new Date(orderDate) : new Date, "dd-MMM-yyyy")}/>
                 <TextLabel label="Supplier" text={supplier || 'N/A'}/>
                 <TextLabel label="Total Items" text={<span className='text-lg font-bold'>{items}</span>}/>
             </div>

@@ -22,8 +22,8 @@ const CreatePasswordForm = PasswordAndConfirmPasswordSchema
 
 async function requireNoPassword(userId: string) {
 	const password = await prisma.password.findUnique({
-		select: { userId: true },
-		where: { userId },
+		select: { userid: true },
+		where: { userid: userId },
 	})
 	if (password) {
 		throw redirect('/settings/profile/password')

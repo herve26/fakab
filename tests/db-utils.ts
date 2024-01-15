@@ -110,7 +110,7 @@ export async function img({
 }) {
 	return {
 		altText,
-		contentType: filepath.endsWith('.png') ? 'image/png' : 'image/jpeg',
+		content_type: filepath.endsWith('.png') ? 'image/png' : 'image/jpeg',
 		blob: await fs.promises.readFile(filepath),
 	}
 }

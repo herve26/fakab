@@ -8,7 +8,7 @@ import {
 } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { createId as cuid } from '@paralleldrive/cuid2'
-import { type Note, type NoteImage } from '@prisma/client'
+import { type note, type note_image } from '@prisma/client'
 import {
 	unstable_createMemoryUploadHandler as createMemoryUploadHandler,
 	json,
@@ -88,7 +88,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 			const note = await prisma.note.findUnique({
 				select: { id: true },
-				where: { id: data.id, ownerId: userId },
+				where: { id: data.id, ownerid: userId },
 			})
 			if (!note) {
 				ctx.addIssue({
@@ -104,14 +104,14 @@ export async function action({ request }: DataFunctionArgs) {
 						if (imageHasFile(i)) {
 							return {
 								id: i.id,
-								altText: i.altText,
-								contentType: i.file.type,
+								alt_text: i.altText,
+								content_type: i.file.type,
 								blob: Buffer.from(await i.file.arrayBuffer()),
 							}
 						} else {
 							return {
 								id: i.id,
-								altText: i.altText,
+								alt_text: i.altText,
 							}
 						}
 					}),
@@ -122,8 +122,8 @@ export async function action({ request }: DataFunctionArgs) {
 						.filter(i => !i.id)
 						.map(async image => {
 							return {
-								altText: image.altText,
-								contentType: image.file.type,
+								alt_text: image.altText,
+								content_type: image.file.type,
 								blob: Buffer.from(await image.file.arrayBuffer()),
 							}
 						}),
@@ -153,7 +153,7 @@ export async function action({ request }: DataFunctionArgs) {
 		select: { id: true, owner: { select: { username: true } } },
 		where: { id: noteId ?? '__new_note__' },
 		create: {
-			ownerId: userId,
+			ownerid: userId,
 			title,
 			content,
 			images: { create: newImages },
@@ -181,8 +181,8 @@ export function NoteEditor({
 	note,
 }: {
 	note?: SerializeFrom<
-		Pick<Note, 'id' | 'title' | 'content'> & {
-			images: Array<Pick<NoteImage, 'id' | 'altText'>>
+		Pick<note, 'id' | 'title' | 'content'> & {
+			images: Array<Pick<note_image, 'id' | 'alt_text'>>
 		}
 	>
 }) {

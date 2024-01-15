@@ -48,8 +48,8 @@ test('The user profile when logged in as self', async () => {
 	const session = await prisma.session.create({
 		select: { id: true },
 		data: {
-			expirationDate: getSessionExpirationDate(),
-			userId: user.id,
+			expiration_date: getSessionExpirationDate(),
+			userid: user.id,
 		},
 	})
 

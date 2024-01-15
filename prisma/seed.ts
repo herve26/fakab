@@ -12,9 +12,9 @@ async function seed() {
 	console.time(' Seeding materials, material units, orders, and order details...');
 
   // Seed Material Units
-  await prisma.materialUnit.create({ data: { unitCode: 'KG', unitName: 'Kilogram' } });
-  await prisma.materialUnit.create({ data: { unitCode: 'M', unitName: 'Meter' } });
-  await prisma.materialUnit.create({ data: { unitCode: 'PC', unitName: 'Piece' } });
+  await prisma.material_unit.create({ data: { unit_code: 'KG', unit_name: 'Kilogram' } });
+  await prisma.material_unit.create({ data: { unit_code: 'M', unit_name: 'Meter' } });
+  await prisma.material_unit.create({ data: { unit_code: 'PC', unit_name: 'Piece' } });
   // ... add more material units as needed
 
   // Seed Materials

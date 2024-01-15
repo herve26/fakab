@@ -37,12 +37,12 @@ export async function loader({ params }: DataFunctionArgs) {
 			id: true,
 			title: true,
 			content: true,
-			ownerId: true,
-			updatedAt: true,
+			ownerid: true,
+			updated_at: true,
 			images: {
 				select: {
 					id: true,
-					altText: true,
+					alt_text: true,
 				},
 			},
 		},
@@ -50,7 +50,7 @@ export async function loader({ params }: DataFunctionArgs) {
 
 	invariantResponse(note, 'Not found', { status: 404 })
 
-	const date = new Date(note.updatedAt)
+	const date = new Date(note.updated_at)
 	const timeAgo = formatDistanceToNow(date)
 
 	return json({
@@ -81,12 +81,12 @@ export async function action({ request }: DataFunctionArgs) {
 	const { noteId } = submission.value
 
 	const note = await prisma.note.findFirst({
-		select: { id: true, ownerId: true, owner: { select: { username: true } } },
+		select: { id: true, ownerid: true, owner: { select: { username: true } } },
 		where: { id: noteId },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
 
-	const isOwner = note.ownerId === userId
+	const isOwner = note.ownerid === userId
 	await requireUserWithPermission(
 		request,
 		isOwner ? `delete:note:own` : `delete:note:any`,
@@ -104,7 +104,7 @@ export async function action({ request }: DataFunctionArgs) {
 export default function NoteRoute() {
 	const data = useLoaderData<typeof loader>()
 	const user = useOptionalUser()
-	const isOwner = user?.id === data.note.ownerId
+	const isOwner = user?.id === data.note.ownerid
 	const canDelete = userHasPermission(
 		user,
 		isOwner ? `delete:note:own` : `delete:note:any`,
@@ -121,7 +121,7 @@ export default function NoteRoute() {
 							<a href={getNoteImgSrc(image.id)}>
 								<img
 									src={getNoteImgSrc(image.id)}
-									alt={image.altText ?? ''}
+									alt={image.alt_text ?? ''}
 									className="h-32 w-32 rounded-lg object-cover"
 								/>
 							</a>

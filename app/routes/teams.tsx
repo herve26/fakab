@@ -8,10 +8,10 @@ export async function loader(){
         select: {
             id: true,
             name: true,
-            inCharge: {
+            incharge: {
                 select: {
-                    firstName: true,
-                    lastName: true,
+                    first_name: true,
+                    last_name: true,
                     email: true
                 }
             },
@@ -23,7 +23,7 @@ export async function loader(){
         }
     })
 
-    const teamArr = teams.map(team => [team.name, team.inCharge ? `${team.inCharge?.firstName} ${team.inCharge?.lastName}` : "N/A", team._count.members])
+    const teamArr = teams.map(team => [team.name, team.incharge ? `${team.incharge?.first_name} ${team.incharge?.last_name}` : "N/A", team._count.members])
 
     return json({teams: teamArr})
 }

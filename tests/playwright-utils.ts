@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test'
-import { type User as UserModel } from '@prisma/client'
+import { type user as UserModel } from '@prisma/client'
 import * as setCookieParser from 'set-cookie-parser'
 import {
 	getPasswordHash,
@@ -76,8 +76,8 @@ export const test = base.extend<{
 			userId = user.id
 			const session = await prisma.session.create({
 				data: {
-					expirationDate: getSessionExpirationDate(),
-					userId: user.id,
+					expiration_date: getSessionExpirationDate(),
+					userid: user.id,
 				},
 				select: { id: true },
 			})

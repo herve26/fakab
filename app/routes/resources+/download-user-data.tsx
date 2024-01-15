@@ -16,9 +16,9 @@ export async function loader({ request }: DataFunctionArgs) {
 			image: {
 				select: {
 					id: true,
-					createdAt: true,
-					updatedAt: true,
-					contentType: true,
+					created_at: true,
+					updated_at: true,
+					content_type: true,
 				},
 			},
 			notes: {
@@ -26,9 +26,9 @@ export async function loader({ request }: DataFunctionArgs) {
 					images: {
 						select: {
 							id: true,
-							createdAt: true,
-							updatedAt: true,
-							contentType: true,
+							created_at: true,
+							updated_at: true,
+							content_type: true,
 						},
 					},
 				},

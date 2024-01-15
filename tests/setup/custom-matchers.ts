@@ -103,7 +103,7 @@ expect.extend({
 
 		const session = await prisma.session.findUnique({
 			select: { id: true },
-			where: { userId, id: sessionValue },
+			where: { userid: userId, id: sessionValue },
 		})
 
 		return {

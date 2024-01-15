@@ -5,9 +5,9 @@ import { z } from 'zod';
 import { prisma } from '#app/utils/db.server.ts';
 
 const schema = z.object({
-  documentName: z.string(),
-  documentDesc: z.string().optional(),
-  documentCode: z.string()
+  document_name: z.string(),
+  document_desc: z.string().optional(),
+  document_code: z.string()
 })
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -19,7 +19,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    await prisma.documentTemplate.create({
+    await prisma.document_template.create({
       data: parsedData.value,
     });
 
@@ -43,34 +43,34 @@ export default function CreateDocumentTemplateForm() {
         <h2 className="font-bold text-lg w-full text-center text-primary mb-4">New Document Template</h2>
         <Form method="POST" className="space-y-4" encType="multipart/form-data">
           <div className="mb-4 space-y-1">
-            <label htmlFor="documentName" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="document_name" className="block text-sm font-medium text-gray-700">
               Document Name
             </label>
             <input
               type="text"
-              id="documentName"
-              name="documentName"
+              id="document_name"
+              name="document_name"
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="mb-4 space-y-1">
-            <label htmlFor="documentDesc" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="document_desc" className="block text-sm font-medium text-gray-700">
               Document Description
             </label>
             <textarea
-              id="documentDesc"
-              name="documentDesc"
+              id="document_desc"
+              name="document_desc"
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="mb-4 space-y-1">
-            <label htmlFor="documentCode" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="document_code" className="block text-sm font-medium text-gray-700">
               Document Code
             </label>
             <input
               type="text"
-              id="documentCode"
-              name="documentCode"
+              id="document_code"
+              name="document_code"
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>

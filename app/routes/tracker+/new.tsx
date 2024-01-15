@@ -27,7 +27,7 @@ export async function action({ request }: ActionFunctionArgs){
         return json({status: "error", submission}, {status: 404})
     }
 
-    const connection = await prisma.customerConnections.create({
+    const connection = await prisma.customer_connection.create({
         data: {
             so: submission.value.so,
             customer_details: submission.value.customer_details,

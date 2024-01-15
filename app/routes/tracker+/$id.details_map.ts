@@ -7,7 +7,7 @@ export async function action({params, request}: ActionFunctionArgs){
     if(!id){
         return json({status: 400, message: 'id is required', data: {}})
     }
-    const connection = await prisma.customerConnections.findUnique({
+    const connection = await prisma.customer_connection.findUnique({
         where: {
             id: id
         },

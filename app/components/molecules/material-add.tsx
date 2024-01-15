@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Select, SelectItem } from "../ui/select.tsx"
 import InputLabel from "./input-label.tsx";
 
-export default function MaterialAdd({materials}: {materials: Record<string, number | string>[]}){
+export default function MaterialAdd({materials}: {materials: Record<string, number | string | null>[]}){
     const [used, setUsed] = useState(0)
 
     return(

@@ -8,11 +8,11 @@ import { Select, SelectItem } from "#app/components/ui/select.tsx";
 import { prisma } from "#app/utils/db.server.ts";
 
 const schema = z.object({
-    firstName: z.string(),
-    lastName: z.string(),
+    first_name: z.string(),
+    last_name: z.string(),
     email: z.string(),
-    teamId: z.number().optional(),
-    startDate: z.date()
+    teamid: z.number().optional(),
+    start_date: z.date()
 })
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -49,12 +49,12 @@ export default function AddEmployee() {
 
   return (
     <Form method="POST" className="min-w-[36vw] rounded shadow-lg p-4">
-        <InputLabel name="firstName" label="First Name" required/>
-        <InputLabel name="lastName" label="Last Name" required/>
+        <InputLabel name="first_name" label="First Name" required/>
+        <InputLabel name="last_name" label="Last Name" required/>
         <InputLabel type="email" name="email" label="Email" required/>
-        <InputLabel type="date" name="startDate" label="Start Date"/>
+        <InputLabel type="date" name="start_date" label="Start Date"/>
         <div className="mb-4">
-            <Select name="teamId" placeholder="Team">
+            <Select name="teamid" placeholder="Team">
                 {teams.map(team => <SelectItem key={team.id} value={`${team.id}`}>{team.name}</SelectItem>)}
             </Select>
         </div>

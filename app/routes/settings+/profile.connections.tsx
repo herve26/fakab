@@ -38,7 +38,7 @@ export const handle: BreadcrumbHandle & SEOHandle = {
 async function userCanDeleteConnections(userId: string) {
 	const user = await prisma.user.findUnique({
 		select: {
-			password: { select: { userId: true } },
+			password: { select: { userid: true } },
 			_count: { select: { connections: true } },
 		},
 		where: { id: userId },
@@ -53,8 +53,8 @@ export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
 	const timings = makeTimings('profile connections loader')
 	const rawConnections = await prisma.connection.findMany({
-		select: { id: true, providerName: true, providerId: true, createdAt: true },
-		where: { userId },
+		select: { id: true, provider_name: true, providerid: true, created_at: true },
+		where: { userid: userId },
 	})
 	const connections: Array<{
 		providerName: ProviderName
@@ -64,19 +64,19 @@ export async function loader({ request }: DataFunctionArgs) {
 		createdAtFormatted: string
 	}> = []
 	for (const connection of rawConnections) {
-		const r = ProviderNameSchema.safeParse(connection.providerName)
+		const r = ProviderNameSchema.safeParse(connection.provider_name)
 		if (!r.success) continue
 		const providerName = r.data
 		const connectionData = await resolveConnectionData(
 			providerName,
-			connection.providerId,
+			connection.providerid,
 			{ timings },
 		)
 		connections.push({
 			...connectionData,
 			providerName,
 			id: connection.id,
-			createdAtFormatted: connection.createdAt.toLocaleString(),
+			createdAtFormatted: connection.created_at.toLocaleString(),
 		})
 	}
 
@@ -112,7 +112,7 @@ export async function action({ request }: DataFunctionArgs) {
 	await prisma.connection.delete({
 		where: {
 			id: connectionId,
-			userId: userId,
+			userid: userId,
 		},
 	})
 	const toastHeaders = await createToastHeaders({

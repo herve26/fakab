@@ -18,7 +18,7 @@ export async function action ({ request }: ActionFunctionArgs) {
     }
 
     try {
-      await prisma.documentResource.delete({
+      await prisma.document_resource.delete({
         where: {
           id: parsedData.value.id
         },

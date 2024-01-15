@@ -9,33 +9,33 @@ import { prisma } from "#app/utils/db.server.ts";
 export async function generateAcceptancePDF({customerID, templateID, mdu = false}: {customerID: string, templateID: string, mdu?: boolean} ){
     
 
-    const templateDoc = await prisma.documentTemplate.findUnique({
+    const templateDoc = await prisma.document_template.findUnique({
         where: {
-            documentCode: templateID
+            document_code: templateID
         },
         include: {
-            templateDocument: true
+            template_resource: true
         }
     })
 
-    const connection = await prisma.customerConnections.findUnique({
+    const connection = await prisma.customer_connection.findUnique({
         where: {
             id: customerID
         },
         include:{
-            documentResources: true
+            documents: true
         }
     })
 
     invariantResponse(connection, "Connection not found")
     invariantResponse(templateDoc, "Template Document is Required")
-    invariantResponse(templateDoc.templateDocument, "Template Document Resource is Required")
+    invariantResponse(templateDoc.template_resource, "Template Document Resource is Required")
 
-    const pdfBuffer = await downloadIntoMemory({fileName: templateDoc.templateDocument.path});
+    const pdfBuffer = await downloadIntoMemory({fileName: templateDoc.template_resource.path});
     const pdfDoc = await PDFDocument.load(pdfBuffer);
     const pages = pdfDoc.getPages()
 
-    const map1Res = connection.documentResources.find(res => res.tag === (mdu ? "map_1_mdu" : "map_1"))
+    const map1Res = connection.documents.find(res => res.tag === (mdu ? "map_1_mdu" : "map_1"))
     invariantResponse(map1Res, "Detailed Map is Required")
     const map1Image = await downloadIntoMemory({fileName: map1Res.path});
     const imageMap1 = await pdfDoc.embedJpg(map1Image)
@@ -53,7 +53,7 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     })
 
 
-    const map2Res = connection.documentResources.find(res => res.tag === (mdu ? "map_2_mdu" : "map_2"))
+    const map2Res = connection.documents.find(res => res.tag === (mdu ? "map_2_mdu" : "map_2"))
     invariantResponse(map2Res, "Drawn Map is Required")
     const map2Image = await downloadIntoMemory({fileName: map2Res.path});
     const imageMap2 = await pdfDoc.embedJpg(map2Image)
@@ -67,7 +67,7 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
         height: mapDims[1]
     })
 
-    const images = await Promise.all(connection.documentResources.filter(res => (
+    const images = await Promise.all(connection.documents.filter(res => (
         mdu ? requiredCCMDUImages.map(req => req.id).includes(res.tag ?? "") : 
         requiredCCImages.map(req => req.id).includes(res.tag ?? "") 
     )).map(async res => (
@@ -126,7 +126,7 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     const page6_client_name = form.getTextField("page6_client_name")
     page6_client_name.setText(`${connection.customer_details.toUpperCase()}${mdu ? " MDU" : ""}`)
 
-    const survey_sheet = connection.documentResources.find(res => res.tag === (mdu ? "survey_sheet_mdu" : "survey_sheet"))
+    const survey_sheet = connection.documents.find(res => res.tag === (mdu ? "survey_sheet_mdu" : "survey_sheet"))
     if(survey_sheet){
         const sheet = await downloadIntoMemory({fileName: survey_sheet.path});
         const last_page = pdfDoc.addPage(PageSizes.A4)

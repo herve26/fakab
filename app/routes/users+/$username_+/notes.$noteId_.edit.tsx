@@ -18,13 +18,13 @@ export async function loader({ params, request }: DataFunctionArgs) {
 			images: {
 				select: {
 					id: true,
-					altText: true,
+					alt_text: true,
 				},
 			},
 		},
 		where: {
 			id: params.noteId,
-			ownerId: userId,
+			ownerid: userId,
 		},
 	})
 	invariantResponse(note, 'Not found', { status: 404 })

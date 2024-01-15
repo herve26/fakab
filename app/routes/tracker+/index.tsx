@@ -26,13 +26,14 @@ export async function action({request}: ActionFunctionArgs){
 	
 	console.log(submission)
 
-	if(!submission.value){
+	if(submission.value === undefined || submission.value === null){
         return json({status: "error", submission}, {status: 404})
     }
 
 	try {
+		const customerid = submission.value.id
 		await supabaseClient.from("material_used").insert(submission.value.material.map(mat => ( 
-				{materialid: mat.id, quantity: mat.quantity, customerid: submission.value.id}
+				{materialid: mat.id, quantity: mat.quantity, customerid }
 		)))
 		await supabaseClient.from("customer_connection").update({
 			completion_date: submission.value.completion_date.toISOString(),

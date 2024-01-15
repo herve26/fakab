@@ -8,15 +8,15 @@ type Props = {
     uploadedImagesFile: {
         id: number;
         name: string;
-        contentType: string | null;
+        content_type: string | null;
         size: number | null;
         tag: string | null;
         url: string | null;
         path: string;
-        createdAt: string;
-        updatedAt: string;
-        customerId: string | null;
-        documentTemplateId: number | null;
+        created_at: string;
+        updated_at: string;
+        customerid: string | null;
+        document_templateid: number | null;
     }[],
     mdu?: boolean
 }

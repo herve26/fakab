@@ -27,9 +27,10 @@ export async function loader({ request }: DataFunctionArgs) {
 export async function action({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
 	await validateCSRF(await request.formData(), request.headers)
-	const { otp: _otp, ...config } = generateTOTP()
+	const { otp: _otp, charSet, ...config } = generateTOTP()
 	const verificationData = {
 		...config,
+		charset: charSet,	
 		type: twoFAVerifyVerificationType,
 		target: userId,
 	}

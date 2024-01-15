@@ -13,7 +13,7 @@ type Props = {
         has_mdu: boolean;
         assignement_date: string;
         completion_date: string | null;
-        teamId: number | null;
+        teamid: number | null;
     }
 }
 export default function CustomerDetailInfo({connection}: Props){
@@ -51,7 +51,7 @@ export default function CustomerDetailInfo({connection}: Props){
                     </div>
                     <div className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500">Team ID</dt>
-                        <dd className="mt-1 text-sm text-gray-900">{connection.teamId}</dd>
+                        <dd className="mt-1 text-sm text-gray-900">{connection.teamid}</dd>
                     </div>
                 </dl>
             </div>

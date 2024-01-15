@@ -162,8 +162,8 @@ model connection {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user   user   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  user   user   @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userid String
 
   @@unique([provider_name, providerid])
 }

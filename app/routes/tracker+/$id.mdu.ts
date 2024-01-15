@@ -7,7 +7,7 @@ export async function action({params}: ActionFunctionArgs){
 
     invariantResponse(id, "Id is required")
 
-    await prisma.customerConnections.update({
+    await prisma.customer_connection.update({
         where: {
             id
         },

@@ -101,7 +101,7 @@ export async function prepareVerification({
 	const verifyUrl = getRedirectToUrl({ request, type, target })
 	const redirectTo = new URL(verifyUrl.toString())
 
-	const { otp, ...verificationConfig } = generateTOTP({
+	const { otp, charSet, ...verificationConfig } = generateTOTP({
 		algorithm: 'SHA256',
 		// Leaving off 0 and O on purpose to avoid confusing users.
 		charSet: 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789',
@@ -115,8 +115,11 @@ export async function prepareVerification({
 	}
 	await prisma.verification.upsert({
 		where: { target_type: { target, type } },
-		create: verificationData,
-		update: verificationData,
+		create: {
+			...verificationData,
+			charset: charSet
+		},
+		update: {...verificationData, charset: charSet },
 	})
 
 	// add the otp to the url we'll email the user.
@@ -143,9 +146,9 @@ export async function isCodeValid({
 	const verification = await prisma.verification.findUnique({
 		where: {
 			target_type: { target, type },
-			OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
+			OR: [{ expires_at: { gt: new Date() } }, { expires_at: null }],
 		},
-		select: { algorithm: true, secret: true, period: true, charSet: true },
+		select: { algorithm: true, secret: true, period: true, charset: true },
 	})
 	if (!verification) return false
 	const result = verifyTOTP({

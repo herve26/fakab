@@ -30,13 +30,13 @@ export async function action({request}: ActionFunctionArgs){
       }
 
       try{
-        await prisma.documentResource.create({
+        await prisma.document_resource.create({
             data: {
                 name: parsedData.value.resourceName,
                 path: parsedData.value.resource,
                 documentTemplate: {
                     connect: {
-                        documentId: parsedData.value.templateId
+                        documentid: parsedData.value.templateId
                     }
                 }
             }
@@ -55,9 +55,9 @@ export async function action({request}: ActionFunctionArgs){
 }
 
 export async function loader(){
-    const templates = await prisma.documentTemplate.findMany({
+    const templates = await prisma.document_template.findMany({
       include: {
-        templateDocument: true
+        template_resource: true
       }
     })
   
@@ -73,24 +73,24 @@ export default function TemplateIndex(){
                     
                     {templates.map(template => 
                         <div
-                            key={template.documentId}
+                            key={template.documentid}
                             className="border hover:shadow-md bg-white rounded-lg max-h-48 flex flex-col items-center space-y-3 py-4"
                         >
-                            <h3 className="text-primary text-lg w-full text-center uppercase">{template.documentName}</h3>
-                            {template.templateDocument && <div className="">
+                            <h3 className="text-primary text-lg w-full text-center uppercase">{template.document_name}</h3>
+                            {template.template_resource && <div className="">
                                 <span className="inline-block">Resource</span>
-                                <h4>{template.templateDocument.name}</h4>
+                                <h4>{template.template_resource.name}</h4>
                             </div>}
                             <Dialog>
                                 <DialogTrigger>
                                     <Button>Add Resource File</Button>
                                 </DialogTrigger>
                                 <DialogContent>
-                                    <h3 className="w-full mb-4 text-lg font-bold text-center text-primary">{template.documentName} 's Resource</h3>
+                                    <h3 className="w-full mb-4 text-lg font-bold text-center text-primary">{template.document_name} 's Resource</h3>
                                     <Form method="POST" encType="multipart/form-data">
                                         <InputLabel label="Document's Name" type="text" name="resourceName"/>
                                         <InputLabel label="Document 📄 Resource" type="file" name="resource"/>
-                                        <input type="hidden" value={template.documentId} name="templateId"/>
+                                        <input type="hidden" value={template.documentid} name="templateId"/>
                                         <Button>Create Resource</Button>
                                     </Form>
                                 </DialogContent>

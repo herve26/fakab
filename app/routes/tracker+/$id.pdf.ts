@@ -9,12 +9,9 @@ export async function loader({ params }: LoaderFunctionArgs){
     const id = params.id
     invariantResponse(id, "ID is required")
 
-    const connection = await prisma.customerConnections.findUnique({
+    const connection = await prisma.customer_connection.findUnique({
         where: {
             id
-        },
-        include:{
-            documentResources: true
         }
     })
 

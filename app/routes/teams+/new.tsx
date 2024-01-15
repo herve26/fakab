@@ -23,9 +23,9 @@ export async function action({request}: ActionFunctionArgs){
     const team = await prisma.team.create({
         data: {
             name: submission.value.name,
-            inCharge: {
+            incharge: {
                 connect: {
-                    employeeId: submission.value.inCharge
+                    employeeid: submission.value.inCharge
                 }
             },
             
@@ -38,8 +38,8 @@ export async function action({request}: ActionFunctionArgs){
 export async function loader(){
     const usersCharge = await prisma.employee.findMany({
         where: {
-            inChargeOf: null,
-            teamId: null
+            inchargeof: null,
+            teamid: null
         }
     })
 
@@ -55,7 +55,7 @@ export default function TeamNew(){
                 <input name="name" placeholder="Team Name" className="block w-full p-2 border border-gray-300 rounded" />
                 <Select name="inCharge" placeholder="Team Leader">
                     {usersCharge.map(employee => (
-                        <SelectItem key={employee.employeeId} value={`${employee.employeeId}`}>{`${employee.firstName} ${employee.lastName}}`}</SelectItem>
+                        <SelectItem key={employee.employeeid} value={`${employee.employeeid}`}>{`${employee.first_name} ${employee.last_name}}`}</SelectItem>
                     ))}
                 </Select>
                 <AddMember employees={usersCharge} />
@@ -66,15 +66,15 @@ export default function TeamNew(){
 }
 
 type Employee = {
-    employeeId: number
-    firstName: string
-    lastName: string
+    employeeid: number
+    first_name: string
+    last_name: string
 }
 
 // React component which has a button to add a new Member
 export function AddMember({employees}: {employees: Employee[]}){
     const [ members, setMembers ] = useState<(string | null)[]>([])
-    const employeeArr = employees.filter(employee => !members.includes(`${employee.employeeId}`))
+    const employeeArr = employees.filter(employee => !members.includes(`${employee.employeeid}`))
     return (
         <div>
             <button
@@ -84,7 +84,7 @@ export function AddMember({employees}: {employees: Employee[]}){
             {members.map((member, index) => (
                 <Select key={index} name={`members[${index}]`} onValueChange={(value) => setMembers([...members.slice(0, index), value, ...members.slice(index + 1)])}>
                     {employeeArr.map(employee => (
-                        <SelectItem key={employee.employeeId} value={`${employee.employeeId}`}>{`${employee.firstName} ${employee.lastName}`}</SelectItem>
+                        <SelectItem key={employee.employeeid} value={`${employee.employeeid}`}>{`${employee.first_name} ${employee.last_name}`}</SelectItem>
                     ))}
                 </Select>
             ))}

@@ -113,7 +113,7 @@ export async function action({ request }: DataFunctionArgs) {
 	headers.append(
 		'set-cookie',
 		await authSessionStorage.commitSession(authSession, {
-			expires: remember ? session.expirationDate : undefined,
+			expires: remember ? session.expiration_date : undefined,
 		}),
 	)
 	headers.append(
