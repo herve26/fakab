@@ -10,7 +10,7 @@ const schema = z.object({
 	SUPABASE_URL: z.string(),
 	SUPABASE_ANON_KEY: z.string(),
 	// If you plan to use the cache, uncomment this line
-	// CACHE_DATABASE_PATH: z.string(),
+	CACHE_DATABASE_PATH: z.string(),
 	// If you plan on using Sentry, uncomment this line
 	// SENTRY_DSN: z.string(),
 	// If you plan to use Resend, uncomment this line
