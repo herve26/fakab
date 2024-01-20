@@ -2,7 +2,6 @@ import { Link } from "@remix-run/react";
 
 type Props = {
     connection: {
-        id: string;
         so: string;
         customer_details: string;
         customer_contact: string;

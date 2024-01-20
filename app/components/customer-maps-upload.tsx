@@ -13,14 +13,14 @@ type ResourceUploadProp = {
         url: string | null;
         path: string;
         created_at: string;
-        updated_at: string;
+        updated_at: string | null;
         customerid: string | null;
         document_templateid: number | null;
     } | null | undefined,
     tag: string,
 }
 
-export function ResourceUpload({doc, customerID, title}: {doc: ResourceUploadProp, customerID: string, title: string}){
+export function ResourceUpload({doc, title}: {doc: ResourceUploadProp, customerID: string, title: string}){
     const fetcher = useFetcher()
 
     const deleteResource = (id: number) => {

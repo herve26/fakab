@@ -8,7 +8,6 @@ import { StatusButton } from './ui/status-button.tsx'
 
 export function SearchBar({
 	status,
-	autoFocus = false,
 	autoSubmit = false,
 }: {
 	status: 'idle' | 'pending' | 'success' | 'error'
@@ -45,7 +44,6 @@ export function SearchBar({
 					defaultValue={searchParams.get('search') ?? ''}
 					placeholder="Search"
 					className="w-full"
-					autoFocus={autoFocus}
 				/>
 			</div>
 			<div>

@@ -14,7 +14,7 @@ type Props = {
         url: string | null;
         path: string;
         created_at: string;
-        updated_at: string;
+        updated_at: string | null;
         customerid: string | null;
         document_templateid: number | null;
     }[],
@@ -125,7 +125,7 @@ type ImagesUploaderProps = {
         <div className="flex">
           <label htmlFor={id} className=" block text-sm font-medium text-gray-700">
             Select Image
-            <input onChange={handleImageUpload} id={id} type="file" className="sr-only"/>
+            <input name={name} onChange={handleImageUpload} id={id} type="file" className="sr-only"/>
           </label>
           <Button onClick={() => { 
             if(selectedImage && handleSubmit) handleSubmit(selectedImage)

@@ -14,7 +14,7 @@ function TD({children}: {children: ReactNode}){
 
 type Props = {
     headers: string[],
-    children: Array<string | number>[]
+    children: (string | number | undefined | null)[][] | null
 }
 
 export default function Table({headers, children}: Props){
@@ -26,7 +26,7 @@ export default function Table({headers, children}: Props){
                         <tr>{headers.map(header => <TH key={header}>{header}</TH>)}</tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {children.map((item, index) => (
+                        {children && children.map((item, index) => (
                             <tr key={index}>
                                 {item.map((td, k) => <TD key={`${index}-${k}`}>{td}</TD>)}
                             </tr>

@@ -6,9 +6,10 @@ import { Icon } from './icon.tsx';
 export const Select = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Root>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & {
-        placeholder?: string
+        placeholder?: string,
+        id?: string
     }
->(({ children, placeholder,...props }, forwardedRef) => {
+>(({ children, placeholder, id, ...props }, forwardedRef) => {
     return (
       <SelectPrimitive.Root {...props}>
         <SelectPrimitive.Trigger className="flex items-center justify-between h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid]:border-input-invalid" ref={forwardedRef}>
@@ -18,7 +19,7 @@ export const Select = React.forwardRef<
           </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
         <SelectPrimitive.Portal>
-          <SelectPrimitive.Content className='RadixSelectContent overflow-hidden bg-white shadow-lg rounded-md'>
+          <SelectPrimitive.Content id={id} className='RadixSelectContent overflow-hidden bg-white shadow-lg rounded-md'>
             <SelectPrimitive.ScrollUpButton>
             <Icon size="font" name="chevron-up" />
             </SelectPrimitive.ScrollUpButton>

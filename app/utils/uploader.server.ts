@@ -44,6 +44,7 @@ export const uploadStreamToCloudStorage = async ({filename, fileStream, makePubl
 };
 
 export const cloudStorageUploaderHandler: UploadHandler = async ({
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     name,
     filename,
     data,

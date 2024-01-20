@@ -1,37 +1,30 @@
 import { invariantResponse } from "@epic-web/invariant";
 import { format } from "date-fns";
 import { PDFDocument, type PDFTextField, StandardFonts, type PDFFont, PageSizes } from "pdf-lib";
-import { requiredCCImages, requiredCCMDUImages } from "#app/routes/tracker+/$id.tsx";
+import { requiredCCImages, requiredCCMDUImages } from "#app/utils/documents-tags.server.ts";
 import { downloadIntoMemory } from "#app/utils/cloud-storage.server.ts";
-import { prisma } from "#app/utils/db.server.ts";
+import { supabaseClient } from "./supa.server.ts";
 
 
 export async function generateAcceptancePDF({customerID, templateID, mdu = false}: {customerID: string, templateID: string, mdu?: boolean} ){
-    
 
-    const templateDoc = await prisma.document_template.findUnique({
-        where: {
-            document_code: templateID
-        },
-        include: {
-            template_resource: true
-        }
-    })
+    const { data: templateDoc } = await supabaseClient.from("document_template").select(`
+        *,
+        template_resource:document_resource(*)
+    `).eq("document_code", templateID).single()
 
-    const connection = await prisma.customer_connection.findUnique({
-        where: {
-            id: customerID
-        },
-        include:{
-            documents: true
-        }
-    })
+    const { data: connection } = await supabaseClient.from("customer_connection").select(`
+        *,
+        documents:document_resource(*)
+    `).eq("so", customerID).single()
 
     invariantResponse(connection, "Connection not found")
+    invariantResponse(connection.documents.length > 0, "Connection Documents are required")
     invariantResponse(templateDoc, "Template Document is Required")
-    invariantResponse(templateDoc.template_resource, "Template Document Resource is Required")
+    invariantResponse(templateDoc.template_resource.length > 0, "Template Document Resource is Required")
 
-    const pdfBuffer = await downloadIntoMemory({fileName: templateDoc.template_resource.path});
+
+    const pdfBuffer = await downloadIntoMemory({fileName: templateDoc.template_resource[0].path});
     const pdfDoc = await PDFDocument.load(pdfBuffer);
     const pages = pdfDoc.getPages()
 
@@ -154,6 +147,8 @@ async function fillFieldWithAdaptiveFontSize(field: PDFTextField, font: PDFFont,
     const fieldWidth = bbox.width;
   
     let fontSize = initFontSize
+
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const width = font.widthOfTextAtSize(text, fontSize);
   
@@ -163,8 +158,6 @@ async function fillFieldWithAdaptiveFontSize(field: PDFTextField, font: PDFFont,
   
       fontSize--;
     }
-
-    console.log(fontSize)
   
     // Set the font size and text
     field.setFontSize(fontSize);

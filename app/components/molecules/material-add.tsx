@@ -16,10 +16,10 @@ export default function MaterialAdd({materials}: {materials: Record<string, numb
                     <div key={idx} className="flex items-center jusify-between space-x-2">
                         <span className="text-md font-bold">{idx + 1}</span>
                         <div className="mb-4 grow">
-                            <label className="block text-sm font-medium">
+                            <label htmlFor={`material[${idx}]`} className="block text-sm font-medium">
                                 Material
                             </label>
-                            <Select name={`material[${idx}].id`}>
+                            <Select id={`material[${idx}]`}name={`material[${idx}].id`}>
                                 {materials.map(mat => <SelectItem key={mat["material_code"]} value={`${mat["materialid"]}`}>{mat["material_name"]}</SelectItem>)}
                             </Select>
                         </div>

@@ -1,9 +1,10 @@
 import { useInputEvent } from '@conform-to/react'
-import React, { useId, useRef } from 'react'
+import React, { FocusEvent, useId, useRef } from 'react'
 import { Checkbox, type CheckboxProps } from './ui/checkbox.tsx'
 import { Input } from './ui/input.tsx'
 import { Label } from './ui/label.tsx'
 import { Textarea } from './ui/textarea.tsx'
+import { CheckedState } from '@radix-ui/react-checkbox'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 
@@ -120,15 +121,15 @@ export function CheckboxField({
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
 					{...buttonProps}
-					onCheckedChange={state => {
+					onCheckedChange={(state: CheckedState) => {
 						control.change(Boolean(state.valueOf()))
 						buttonProps.onCheckedChange?.(state)
 					}}
-					onFocus={event => {
+					onFocus={(event: FocusEvent<HTMLButtonElement, Element>) => {
 						control.focus()
 						buttonProps.onFocus?.(event)
 					}}
-					onBlur={event => {
+					onBlur={(event: FocusEvent<HTMLButtonElement, Element>) => {
 						control.blur()
 						buttonProps.onBlur?.(event)
 					}}
