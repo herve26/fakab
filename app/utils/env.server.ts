@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 const schema = z.object({
 	NODE_ENV: z.enum(['production', 'development', 'test'] as const),
-	DATABASE_URL: z.string(),
 	SESSION_SECRET: z.string(),
 	SUPABASE_URL: z.string(),
 	SUPABASE_ANON_KEY: z.string()
@@ -46,7 +45,8 @@ export function getEnv() {
 type ENV = ReturnType<typeof getEnv>
 
 declare global {
-	let ENV: ENV
+	// eslint-disable-next-line no-var
+	var ENV: ENV
 	interface Window {
 		ENV: ENV
 	}
