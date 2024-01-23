@@ -2,14 +2,17 @@ import { type ActionFunctionArgs, unstable_parseMultipartFormData, json } from "
 import { cloudStorageUploaderHandler } from "#app/utils/uploader.server.ts";
 import { supabaseClient } from "#app/utils/supa.server.ts";
 import { invariantResponse } from "@epic-web/invariant";
+import { getUUID } from "#app/utils/uuid.server.ts";
 
 export async function action({params, request}: ActionFunctionArgs){
-    const id = params.id
-    if(!id){
+    const shortid = params.id
+    if(!shortid){
         return json({status: 400, message: 'id is required', data: {}})
     }
 
-    const { data } = await supabaseClient.from("customer_connection").select("so").eq("so", id).single()
+    const id = getUUID(shortid)
+
+    const { data } = await supabaseClient.from("customer_connection").select("so").eq("id", id).single()
 
     invariantResponse(data, "Unable to Get Customer Data")
 

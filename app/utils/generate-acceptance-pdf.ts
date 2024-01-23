@@ -16,7 +16,7 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     const { data: connection } = await supabaseClient.from("customer_connection").select(`
         *,
         documents:document_resource(*)
-    `).eq("so", customerID).single()
+    `).eq("id", customerID).single()
 
     invariantResponse(connection, "Connection not found")
     invariantResponse(connection.documents.length > 0, "Connection Documents are required")

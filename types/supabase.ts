@@ -115,8 +115,9 @@ export interface Database {
           customer_details: string
           geo_localization: string
           has_mdu: boolean
+          id: string
           path: Json | null
-          so: string
+          so: string | null
           teamid: number | null
         }
         Insert: {
@@ -129,8 +130,9 @@ export interface Database {
           customer_details: string
           geo_localization: string
           has_mdu?: boolean
+          id?: string
           path?: Json | null
-          so: string
+          so?: string | null
           teamid?: number | null
         }
         Update: {
@@ -143,8 +145,9 @@ export interface Database {
           customer_details?: string
           geo_localization?: string
           has_mdu?: boolean
+          id?: string
           path?: Json | null
-          so?: string
+          so?: string | null
           teamid?: number | null
         }
         Relationships: [
@@ -203,7 +206,7 @@ export interface Database {
             columns: ["customerid"]
             isOneToOne: false
             referencedRelation: "customer_connection"
-            referencedColumns: ["so"]
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "document_resource_document_templateid_fkey"
@@ -361,7 +364,7 @@ export interface Database {
             columns: ["customerid"]
             isOneToOne: false
             referencedRelation: "customer_connection"
-            referencedColumns: ["so"]
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "material_used_materialid_fkey"

@@ -3,13 +3,16 @@ import { type LoaderFunctionArgs } from "@remix-run/node";
 import JSZip from "jszip";
 import { generateAcceptancePDF } from "#app/utils/generate-acceptance-pdf.ts";
 import { supabaseClient } from "#app/utils/supa.server.ts";
+import { getUUID } from "#app/utils/uuid.server.ts";
   
 
 export async function loader({ params }: LoaderFunctionArgs){
-    const id = params.id
-    invariantResponse(id, "ID is required")
+    const shortid = params.id
+    invariantResponse(shortid, "ID is required")
 
-    const { data: connection } = await supabaseClient.from("customer_connection").select().eq("so", id).single()
+    const id = getUUID(shortid)
+
+    const { data: connection } = await supabaseClient.from("customer_connection").select().eq("id", id).single()
 
     invariantResponse(connection, "Connection not found")
 

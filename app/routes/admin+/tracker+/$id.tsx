@@ -1,7 +1,7 @@
 import { parse } from "@conform-to/zod";
 import { invariantResponse } from "@epic-web/invariant";
 import { type ActionFunctionArgs, json, unstable_parseMultipartFormData, unstable_composeUploadHandlers, unstable_createMemoryUploadHandler, type LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 import CustomerDetailInfo from "#app/components/customer-detail-info.tsx";
 import CustomerRequiredImages from "#app/components/customer-images.tsx";
@@ -11,6 +11,9 @@ import Table from "#app/components/table.tsx";
 import { uploadStreamToCloudStorage } from "#app/utils/uploader.server.ts";
 import { supabaseClient } from "#app/utils/supa.server.ts";
 import { requiredCCImages, requiredCCMDUImages } from "#app/utils/documents-tags.server.ts";
+import MaterialAdd from "#app/components/molecules/material-add.tsx";
+import { Button } from "#app/components/ui/button.tsx";
+import { getShortID, getUUID } from "#app/utils/uuid.server.ts";
 
 const schema = z.object({
   name: z.string(),
@@ -20,9 +23,10 @@ const schema = z.object({
 })
 
 export async function action({params, request}: ActionFunctionArgs){
-  const id = params.id
-  if(id === null) return json({message: "Id is required"}, {status: 404})
+  const shortid = params.id
+  if(!shortid) return json({message: "Id is required"}, {status: 404})
   
+  const id = getUUID(shortid)
   let path = ""
 
   const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(async ({name, filename, data}) => {
@@ -61,22 +65,27 @@ export async function action({params, request}: ActionFunctionArgs){
 }
 
 export async function loader({params}: LoaderFunctionArgs) {
-  const id = params.id
-  invariantResponse(id, 'Must Provide a connection ID', {status: 404})
+  const shortid = params.id
+  invariantResponse(shortid, 'Must Provide a connection ID', {status: 404})
+
+  const id = getUUID(shortid)
 
   const {data } = await supabaseClient.from("customer_connection").select(`
     *,
     documents:document_resource(*),
     materials:material_used(quantity, material(material_code, material_name))
-  `).eq("so", id).single()
+  `).eq("id", id).single()
 
+  const {data: materials} = await supabaseClient.from("material").select("material_name, material_code, materialid")
+  
   invariantResponse(data, 'Connection Not Found', { status: 404 })
 
-  return json({customerConnection: data, requiredImages: requiredCCImages, requiredMDUImages: requiredCCMDUImages});
+  return json({customerConnection: {...data, id: getShortID(data.id)}, requiredImages: requiredCCImages, requiredMDUImages: requiredCCMDUImages, materials: materials ?? []});
 }
 
 export default function TrackerID(){
-    const { customerConnection, requiredImages, requiredMDUImages } = useLoaderData<typeof loader>()
+    const fetcher = useFetcher()
+    const { customerConnection, requiredImages, requiredMDUImages, materials: materialsList } = useLoaderData<typeof loader>()
     const materials = customerConnection.materials.map(mat => [mat.material?.material_code, mat.material?.material_name, mat.quantity])
     const map_1Image = customerConnection.documents.find(res => res.tag === "map_1")
     const map_2Image = customerConnection.documents.find(res => res.tag === "map_2")
@@ -94,18 +103,25 @@ export default function TrackerID(){
     const survey_mdu = customerConnection.documents.find(res => res.tag === "survey_sheet_mdu")
     
     return (
-        <div className="flex flex-col space-y-4 px-6 mb-6">
-          <h1 className="mb-5 text-3xl font-bold">Customer Connection</h1>
+        <div className="flex flex-col space-y-4 px-2 md:px-6 mb-6">
           <CustomerDetailInfo connection={customerConnection}/>
 
           <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6 bg-primary">
-              <div className="flex space-x-5">
+              <div className="flex items-center justify-between space-x-5">
                 <h2 className="text-lg leading-6 font-medium text-white">Materials Used</h2>
                 <Dialog>
-                  <DialogTrigger>+</DialogTrigger>
-                  <DialogContent>Add Material Used</DialogContent>
-                </Dialog>
+								<DialogTrigger asChild>
+									<button className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>+</button>
+								</DialogTrigger>
+								<DialogContent>
+									<fetcher.Form className="flex flex-col min-h-[30vh] justify-between" method="POST">
+										<input type="hidden" name="id" value={customerConnection.id}/>
+										<MaterialAdd materials={materialsList}/>
+										<Button className="place-items-end" type='submit'>Add Material</Button>
+									</fetcher.Form>
+								</DialogContent>
+							</Dialog>
               </div>
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
@@ -117,14 +133,14 @@ export default function TrackerID(){
 
           <CustomerMapsUpload 
             maps={[{resource: map_1Image, tag: "map_1"}, {resource: map_2Image, tag: "map_2"}]}
-            customerID={customerConnection.so}
+            customerID={customerConnection.id}
           />
 
           <CustomerRequiredImages imagesToAdd={imagesToAdd} uploadedImagesFile={requiredImagesFile}/>
 
           {customerConnection.has_mdu && <CustomerMapsUpload
             maps={[{resource: map_1ImageMDU, tag: "map_1_mdu"}, {resource: map_2ImageMDU, tag: "map_2_mdu"}]}
-            customerID={customerConnection.so}
+            customerID={customerConnection.id}
             mdu
           />}
 
@@ -143,7 +159,7 @@ export default function TrackerID(){
             <div className="p-4">
             <ResourceUpload
                 doc={{resource: survey, tag: "survey_sheet"}}
-                customerID={customerConnection.so}
+                customerID={customerConnection.id}
                 title="Survey Sheet"
               />
             </div>
@@ -158,7 +174,7 @@ export default function TrackerID(){
             <div className="p-4">
             <ResourceUpload
                 doc={{resource: survey_mdu, tag: "survey_sheet_mdu"}}
-                customerID={customerConnection.so}
+                customerID={customerConnection.id}
                 title="Survey Sheet MDU"
               />
             </div>

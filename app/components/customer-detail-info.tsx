@@ -2,7 +2,7 @@ import { Link } from "@remix-run/react";
 
 type Props = {
     connection: {
-        so: string;
+        so: string | null;
         customer_details: string;
         customer_contact: string;
         customer_address: string;
@@ -17,13 +17,13 @@ type Props = {
 }
 export default function CustomerDetailInfo({connection}: Props){
     return (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div className="bg-white shadow mt-6 overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6 bg-primary flex items-center justify-between">
               <h2 className="text-white text-lg leading-6 font-bold">General Information</h2>
               <Link reloadDocument to={`pdf`} className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>PDF</Link>
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-8">
                     <div className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500">SO</dt>
                         <dd className="mt-1 text-sm text-gray-900">{connection.so}</dd>
@@ -51,6 +51,10 @@ export default function CustomerDetailInfo({connection}: Props){
                     <div className="sm:col-span-1">
                         <dt className="text-sm font-medium text-gray-500">Team ID</dt>
                         <dd className="mt-1 text-sm text-gray-900">{connection.teamid}</dd>
+                    </div>
+                    <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Geo Location</dt>
+                        <dd className="mt-1 text-sm text-gray-900">{connection.geo_localization}</dd>
                     </div>
                 </dl>
             </div>

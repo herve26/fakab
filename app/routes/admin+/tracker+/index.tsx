@@ -1,14 +1,11 @@
 import { parse } from '@conform-to/zod';
 import { type ActionFunctionArgs, json } from '@remix-run/node';
-import { Link, useFetcher, useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { format } from 'date-fns';
 import { z } from 'zod';
-import { Dialog, DialogContent, DialogTrigger } from '#app/components/dialog.tsx';
-import InputLabel from '#app/components/molecules/input-label.tsx';
-import MaterialAdd from '#app/components/molecules/material-add.tsx';
 import TextLabel from '#app/components/molecules/text-label.tsx';
-import { Button } from '#app/components/ui/button.tsx';
 import { supabaseClient } from '#app/utils/supa.server.ts';
+import { getShortID } from '#app/utils/uuid.server.ts';
 
 const materialSchema = z.object({
 	id: z.number(),
@@ -23,8 +20,6 @@ const schema = z.object({
 export async function action({request}: ActionFunctionArgs){
 	const formData = await request.formData()
 	const submission = parse(formData, { schema })
-	
-	console.log(submission)
 
 	if(submission.value === undefined || submission.value === null){
         return json({status: "error", submission}, {status: 404})
@@ -48,28 +43,25 @@ export async function action({request}: ActionFunctionArgs){
 }
 
 export async function loader() {
-	const connections = await supabaseClient.from("customer_connection").select()
-	const materials = await supabaseClient.from("material").select()
+	const { data } = await supabaseClient.from("customer_connection").select()
 
-	if(!connections.data) throw new Error("Unable to Get Value")
-	if(!materials.data) throw new Error("Unable to Get Materials")
+	if(!data) throw new Error("Unable to Get Value")
 
-	return json({connections: connections.data, materials: materials.data});
+	return json({connections: data.map(conn => ({...conn, id: getShortID(conn.id)}))});
 }
 
 function CustomerConnectionsList() {
-	const { connections, materials } = useLoaderData<typeof loader>();
-	const fetcher = useFetcher()
+	const { connections } = useLoaderData<typeof loader>();
 
 	return (
-		<div className='px-8 py-6  h-full'>
+		<div className='px-2 md:px-8 py-6  h-full'>
 			<div className="mb-4 flex items-center space-x-4">
 				<h2 className="text-xl font-bold">Customer Connections</h2>
 				<Link to="new" className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>New</Link>
 			</div>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{connections.map((connection) => (
-					<div key={connection.so} className="border border-slate-200 bg-white rounded-lg shadow-md p-4">
+					<div key={connection.id} className="border border-slate-200 bg-white rounded-lg shadow-md p-4">
 						<div className="flex items-center justify-between pb-4 mb-4 border-b-2 border-slate-200">
 							<h3 className="text-lg font-bold mb-2">{connection.so}</h3>
 							{connection.has_mdu && <div className="border border-primary rounded-xl text-primary text-sm px-3 py-2">MDU</div>}
@@ -82,29 +74,22 @@ function CustomerConnectionsList() {
 							{connection.completion_date && (
 								<TextLabel label="Completion Date" text={format(new Date(connection.completion_date), "dd-MMM-yyyy")}/>
 							)}
-							<TextLabel label="Geo Localisation" text={connection.geo_localization}/>
+							<TextLabel label="Geo Localisation" text={<a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(connection.geo_localization)}`}>{connection.geo_localization}</a>}/>
+							<TextLabel label="Contact" text={
+								<div className='inline-flex'>
+									<a href={`tel:+${connection.customer_contact}`}>{connection.customer_contact}</a>
+									<a href={`https://wa.me/${connection.customer_contact.replaceAll("-","")}`} className='mr-2'>WA</a>
+								</div>
+							}/>
 						</div>
 						<div className="flex justify-between mt-4 pt-4 border-t-2 border-slate-200">
-							<Dialog>
-								<DialogTrigger asChild>
-									<button className='bg-green-400 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm'>DONE</button>
-								</DialogTrigger>
-								<DialogContent>
-									<fetcher.Form method="POST">
-										<input type="hidden" name="id" value={connection.so}/>
-										<InputLabel type="date" label="Completion Date" name="completion_date"/>
-										<MaterialAdd materials={materials}/>
-										<Button type='submit'>Add Material</Button>
-									</fetcher.Form>
-								</DialogContent>
-							</Dialog>
-							<Link to={`${connection.so}`} className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+							<Link to={`${connection.id}`} className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
 								Details
 							</Link>
-							{!connection.has_mdu && <button
-								className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-								onClick={() => fetcher.submit("", { method: "POST", action: `/tracker/${connection.so}/mdu`})}>MDU</button>}
-							<Link reloadDocument to={`${connection.so}/pdf`} className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>PDF</Link>
+							<div className='inline-flex justify-between space-x-2'>
+								{connection.path && <Link className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' reloadDocument to={`${connection.so}/kml`}>KML</Link>}
+								<Link reloadDocument to={`${connection.id}/pdf`} className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>PDF</Link>
+							</div>
 						</div>
 					</div>
 				))}

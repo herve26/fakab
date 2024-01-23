@@ -19,7 +19,7 @@ export function Card({to, children}: CardProps){
 
 export default function IndexRoute(){
     return(
-        <div className="px-8 py-6 grid grid-cols-4 gap-x-4 gap-y-4">
+        <div className="px-2 md:px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4">
             <Card to="tracker">Tracker</Card>
             <Card to="teams">Teams</Card>
             <Card to="users">Users</Card>
