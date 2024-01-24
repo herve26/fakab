@@ -1,7 +1,7 @@
 import { parse } from "@conform-to/zod";
 import { invariantResponse } from "@epic-web/invariant";
 import { type ActionFunctionArgs, json, unstable_parseMultipartFormData, unstable_composeUploadHandlers, unstable_createMemoryUploadHandler, type LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { type UIMatch, useFetcher, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 import CustomerDetailInfo from "#app/components/customer-detail-info.tsx";
 import CustomerRequiredImages from "#app/components/customer-images.tsx";
@@ -82,6 +82,10 @@ export async function loader({params}: LoaderFunctionArgs) {
 
   return json({customerConnection: {...data, id: getShortID(data.id)}, requiredImages: requiredCCImages, requiredMDUImages: requiredCCMDUImages, materials: materials ?? []});
 }
+
+export const handle = {
+	breadcrumb: (match: UIMatch<typeof loader, unknown>) => ({route: `/admin/tracker/${match.data.customerConnection.id}`, text: match.data.customerConnection.id}),
+};
 
 export default function TrackerID(){
     const fetcher = useFetcher()

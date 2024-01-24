@@ -5,10 +5,14 @@ import Table from '#app/components/table.tsx';
 import { supabaseClient } from '#app/utils/supa.server.ts';
 
 export async function loader(){
-    const { data } = await supabaseClient.from("employee").select()
+    const { data, error } = await supabaseClient.from("employee").select('first_name, last_name, team!employee_teamid_fkey ( name ) ')
+
+    console.log(data)
+    console.log(error)
+
     if(!data) return json({employees: []})
 
-    const employeesArr = data.map(emp => [emp.first_name, emp.last_name, emp.teamid ? emp.teamid : "N/A"])
+    const employeesArr = data.map(emp => [emp.first_name, emp.last_name,  emp.team?.name ?? "N/A"])
     
     return json({employees: employeesArr})
 }

@@ -6,7 +6,7 @@ import { Form } from "@remix-run/react";
 import { z } from "zod";
 
 const schema = z.object({
-    so: z.string().max(20, "Customer SO# cannot have more than 20 Charater"),
+    so: z.string().max(20, "Customer SO# cannot have more than 20 Charater").optional(),
     customer_details: z.string(),
     customer_contact: z.string().min(10).max(15),
     customer_address: z.string(),
