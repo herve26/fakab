@@ -4,7 +4,8 @@ const schema = z.object({
 	NODE_ENV: z.enum(['production', 'development', 'test'] as const),
 	SESSION_SECRET: z.string(),
 	SUPABASE_URL: z.string(),
-	SUPABASE_ANON_KEY: z.string()
+	SUPABASE_ANON_KEY: z.string(),
+	GOOGLE_CLOUD_BUCKET: z.string()
 })
 
 declare global {

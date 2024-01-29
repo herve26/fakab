@@ -17,7 +17,7 @@ export async function loader({params}: LoaderFunctionArgs){
     invariantResponse(data, "Unable to Fetch Path")
     invariantResponse(data.path, "Unable to get Path")
 
-    const path: PathData = data.path
+    const path  = data.path as PathData
 
 
     const kmlDocument = createKMLDocument(path)

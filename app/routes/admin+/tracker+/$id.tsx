@@ -19,7 +19,6 @@ const schema = z.object({
   name: z.string(),
   tag: z.string(),
   resource: z.string(),
-
 })
 
 export async function action({params, request}: ActionFunctionArgs){

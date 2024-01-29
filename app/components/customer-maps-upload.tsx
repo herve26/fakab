@@ -1,7 +1,5 @@
-import { Form, useFetcher } from "@remix-run/react";
-import { Dialog, DialogContent, DialogTrigger } from "./dialog.tsx";
-import InputLabel from "./molecules/input-label.tsx";
-import { Button } from "./ui/button.tsx";
+import { useFetcher } from "@remix-run/react";
+import FileSelectUpload from "./file-select-upload.tsx";
 
 type ResourceUploadProp = {
     resource: {
@@ -30,7 +28,7 @@ export function ResourceUpload({doc, title}: {doc: ResourceUploadProp, customerI
     }
 
     return (
-        <div>
+        <div className="min-h-[80vh] flex flex-col">
             {doc.resource && (<div className="relative border">
                 <button
                     className="absolute right-4 top-4 rounded-full bg-primary text-white h-8 w-8"
@@ -38,20 +36,6 @@ export function ResourceUpload({doc, title}: {doc: ResourceUploadProp, customerI
                 >X</button>
                 {doc.resource.url && <img src={doc.resource.url} alt={title}/>}
             </div> )}
-            {!doc.resource && <Dialog>
-                <DialogTrigger>
-                    <Button>Add Resource File</Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <h3 className="w-full mb-4 text-lg font-bold text-center text-primary">Detailed doc Resource</h3>
-                    <Form method="POST" encType="multipart/form-data">
-                        <InputLabel label="Document's Name" type="text" name="name"/>
-                        <InputLabel label="Document 📄 Resource" type="file" name="resource"/>
-                        <input type="hidden" value={doc.tag} name="tag"/>
-                        <Button>Create Resource</Button>
-                    </Form>
-                </DialogContent>
-            </Dialog>}
         </div>
     )
 }
@@ -63,7 +47,23 @@ type Props = {
     mdu?: boolean;
 }
 
-export default function CustomerMapsUpload({maps, customerID, mdu=false}: Props){
+export default function CustomerMapsUpload({maps, mdu=false}: Props){
+
+    const fetcher = useFetcher()
+    const isSubmitting = fetcher.state === "submitting"
+
+    const handleSubmit = (files: File[], name: string, tag: string) => {
+        if(files.length > 0){
+            const formData = new FormData()
+
+            formData.append("name", name)
+            formData.append("tag", tag)
+            formData.append("resource", files[0])
+
+            fetcher.submit(formData, { method: "POST", encType: "multipart/form-data"})
+        }
+        
+    }
 
     return (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
@@ -71,11 +71,19 @@ export default function CustomerMapsUpload({maps, customerID, mdu=false}: Props)
                 <h2 className="text-white text-lg leading-6 font-bold">Maps {mdu ? "MDU" : ""}</h2>
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
-                <div className="grid grid-cols-2 gap-x-4">
-                    <ResourceUpload doc={maps[0]} customerID={customerID} title={"Detailed Customer Map"}/>
-                    <ResourceUpload doc={maps[1]} customerID={customerID} title="Drawn Customer Map"/>
+                <div className="grid grid-cols-2 gap-x-4 min-h-[80vh]">
+                    <FileSelectUpload
+                        title="Detailed Map" 
+                        submitting={isSubmitting}
+                        onSubmit={(files) => handleSubmit(files, "Detailed Map", maps[0].tag)}
+                    />
+                    <FileSelectUpload
+                        title="Drawn Map"
+                        submitting={isSubmitting} 
+                        onSubmit={(files) => handleSubmit(files, "Detailed Map", maps[1].tag)}
+                    />
               </div>
             </div>
-          </div>
+        </div>
     )
 }
