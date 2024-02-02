@@ -4,6 +4,7 @@ import { PDFDocument, type PDFTextField, StandardFonts, type PDFFont, PageSizes 
 import { requiredCCImages, requiredCCMDUImages } from "#app/utils/documents-tags.server.ts";
 import { downloadIntoMemory } from "#app/utils/cloud-storage.server.ts";
 import { supabaseClient } from "./supa.server.ts";
+import fs from "node:fs/promises"
 
 
 export async function generateAcceptancePDF({customerID, templateID, mdu = false}: {customerID: string, templateID: string, mdu?: boolean} ){
@@ -24,19 +25,23 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     invariantResponse(templateDoc.template_resource.length > 0, "Template Document Resource is Required")
 
 
-    const pdfBuffer = await downloadIntoMemory({fileName: templateDoc.template_resource[0].path});
+    const pdfBuffer = process.env["NODE_ENV"] === "production" ? 
+        await downloadIntoMemory({fileName: templateDoc.template_resource[0].path}):
+        await fs.readFile(`${process.cwd()}/public/${templateDoc.template_resource[0].url}`);
     const pdfDoc = await PDFDocument.load(pdfBuffer);
     const pages = pdfDoc.getPages()
 
     const map1Res = connection.documents.find(res => res.tag === (mdu ? "map_1_mdu" : "map_1"))
     invariantResponse(map1Res, "Detailed Map is Required")
-    const map1Image = await downloadIntoMemory({fileName: map1Res.path});
+    const map1Image = process.env["NODE_ENV"] === "production" ? 
+        await downloadIntoMemory({fileName: map1Res.path}) : 
+        await fs.readFile(`${process.cwd()}/public/${map1Res.url}`);
+
     const imageMap1 = await pdfDoc.embedJpg(map1Image)
     // const jpgDims = imageMap1.scale(0.17)
     const mapDims = [652, 367]
 
   
-
     const page3 = pages[2]
     page3.drawImage(imageMap1, {
         x: 142,
@@ -48,7 +53,9 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
 
     const map2Res = connection.documents.find(res => res.tag === (mdu ? "map_2_mdu" : "map_2"))
     invariantResponse(map2Res, "Drawn Map is Required")
-    const map2Image = await downloadIntoMemory({fileName: map2Res.path});
+    const map2Image = process.env["NODE_ENV"] === "production" ? 
+        await downloadIntoMemory({fileName: map2Res.path}) :
+        await fs.readFile(`${process.cwd()}/public/${map2Res.url}`)
     const imageMap2 = await pdfDoc.embedJpg(map2Image)
     // const jpgDims2 = imageMap2.scale(0.17)
 
@@ -63,8 +70,8 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     const images = await Promise.all(connection.documents.filter(res => (
         mdu ? requiredCCMDUImages.map(req => req.id).includes(res.tag ?? "") : 
         requiredCCImages.map(req => req.id).includes(res.tag ?? "") 
-    )).map(async res => (
-        {buffer: await downloadIntoMemory({fileName: res.path}), id: res.tag }
+    )).filter(res => res.for_report).map(async res => (
+        {buffer: process.env["NODE_ENV"] === "production" ? await downloadIntoMemory({fileName: res.path}) : await fs.readFile(`${process.cwd()}/public/${res.url}`), id: res.tag }
     )))
     
     const TimeRoman = await pdfDoc.embedFont(StandardFonts.TimesRomanBold)
@@ -121,7 +128,9 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
 
     const survey_sheet = connection.documents.find(res => res.tag === (mdu ? "survey_sheet_mdu" : "survey_sheet"))
     if(survey_sheet){
-        const sheet = await downloadIntoMemory({fileName: survey_sheet.path});
+        const sheet = process.env["NODE_ENV"] === "production" ? 
+            await downloadIntoMemory({fileName: survey_sheet.path}) :
+            await fs.readFile(`${process.cwd()}/public/${survey_sheet.url}`)
         const last_page = pdfDoc.addPage(PageSizes.A4)
         console.log("page Size", PageSizes.A4)
         const sheet_image = await pdfDoc.embedJpg(sheet)

@@ -10,7 +10,7 @@ const schema = z.object({
     customer_details: z.string(),
     customer_contact: z.string().min(10).max(15),
     customer_address: z.string(),
-    assignment_date: z.date().optional().transform(date => date?.toISOString()),
+    assignement_date: z.date().optional().transform(date => date?.toISOString()),
     completion_date: z.date().optional().transform(date => date?.toISOString()),
     has_mdu: z.boolean().optional(),
     area: z.string(),
@@ -28,12 +28,19 @@ export async function action({ request }: ActionFunctionArgs){
         return json({status: "error", submission}, {status: 404})
     }
 
-    const { data } = await supabaseClient.from("customer_connection").insert(submission.value).select().single()
-
-    invariantResponse(data, "Unable to Create new Connection")
+    try{
+        const { data, error } = await supabaseClient.from("customer_connection").insert(submission.value).select().single()
+        console.error(error)
+        invariantResponse(data, "Unable to Create new Connection")
     
+        return redirect(`/tracker/${data.so}`)
+    }
+    catch(e){
+        console.log(e)
+        return json({error: true})
+    }
 
-    return redirect(`/tracker/${data.so}`)
+    
 }
 
 export default function NewConnection(){
@@ -48,7 +55,7 @@ export default function NewConnection(){
                 <input name="customer_address" placeholder="Address" className="block w-full p-2 border border-gray-300 rounded" />
                 <input name="area" placeholder="Area" className="block w-full p-2 border border-gray-300 rounded" />
                 <input name="geo_localization" placeholder="Geo Localization" className="block w-full p-2 border border-gray-300 rounded" />
-                <input name="assignment_date" placeholder="Assignement Date" type="date" className="block w-full p-2 border border-gray-300 rounded"/>
+                <input name="assignement_date" placeholder="Assignement Date" type="date" className="block w-full p-2 border border-gray-300 rounded"/>
                 <input name="completion_date" placeholder="Completion Date" type="date" className="block w-full p-2 border border-gray-300 rounded"/>
                 <select name="connection_type" className="block w-full p-2 border border-gray-300 rounded">
                     <option value="GPON">GPON</option>

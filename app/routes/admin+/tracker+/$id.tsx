@@ -1,6 +1,6 @@
 import { parse } from "@conform-to/zod";
 import { invariantResponse } from "@epic-web/invariant";
-import { type ActionFunctionArgs, json, unstable_parseMultipartFormData, unstable_composeUploadHandlers, unstable_createMemoryUploadHandler, type LoaderFunctionArgs } from "@remix-run/node";
+import { type ActionFunctionArgs, json, unstable_parseMultipartFormData, unstable_composeUploadHandlers, unstable_createMemoryUploadHandler, type LoaderFunctionArgs, unstable_createFileUploadHandler, NodeOnDiskFile } from "@remix-run/node";
 import { type UIMatch, useFetcher, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 import CustomerDetailInfo from "#app/components/customer-detail-info.tsx";
@@ -14,6 +14,7 @@ import { requiredCCImages, requiredCCMDUImages } from "#app/utils/documents-tags
 import MaterialAdd from "#app/components/molecules/material-add.tsx";
 import { Button } from "#app/components/ui/button.tsx";
 import { getShortID, getUUID } from "#app/utils/uuid.server.ts";
+import p from "node:path";
 
 const schema = z.object({
   name: z.string(),
@@ -28,21 +29,32 @@ export async function action({params, request}: ActionFunctionArgs){
   const id = getUUID(shortid)
   let path = ""
 
-  const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(async ({name, filename, data}) => {
-    if(name !== "resource") return undefined;
-    path = `${id}/${Date.now()}_${filename}`
-    return await uploadStreamToCloudStorage({filename: path, fileStream: data, makePublic: true})
+  const regex = new RegExp(/^resource$/);
+
+  const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(process.env["NODE_ENV"] === "production" ? async ({name, filename, data, contentType}) => {
+    if(!regex.test(name) || !filename) return undefined;
+    const pt = `${id}/${Date.now()}_${filename}` 
+    path = pt 
+    return await uploadStreamToCloudStorage({name, filename, data, contentType})
+  } : async ({name, filename, data, contentType}) => { 
+    if(!regex.test(name)) return undefined
+    const handler = unstable_createFileUploadHandler({directory: p.join(process.cwd(), "public", "resources")})
+    const file = await handler({name, filename, data, contentType}) as NodeOnDiskFile
+    if(!file) return undefined
+    return `/resources/${file.name}`
   }, unstable_createMemoryUploadHandler()));
 
   const parsedData = parse(formData, { schema })
 
   if(!parsedData.value){
+    console.log(parsedData)
     return json({status: "error", parsedData}, {status: 404})
   }
 
+  
+
   try {
     const { data: document } = await supabaseClient.from("document_resource").insert({
-      name: parsedData.value.name,
       tag: parsedData.value.tag,
       path,
       url: parsedData.value.resource,
@@ -97,10 +109,12 @@ export default function TrackerID(){
     const map_2ImageMDU = customerConnection.documents.find(res => res.tag === "map_2_mdu")
 
     const requiredImagesFile = customerConnection.documents.filter(img => requiredImages.map(req => req.id).includes(img.tag ?? ""))
-    const imagesToAdd = requiredImages.filter(img => !requiredImagesFile.map(req => req.tag).includes(img.id))
+    const imagesToAdd = requiredImages
+    // .filter(img => !requiredImagesFile.map(req => req.tag).includes(img.id))
 
     const requiredImagesFileMDU = customerConnection.documents.filter(img => requiredMDUImages.map(req => req.id).includes(img.tag ?? ""))
-    const imagesToAddMDU = requiredMDUImages.filter(img => !requiredImagesFileMDU.map(req => req.tag).includes(img.id))
+    const imagesToAddMDU = requiredMDUImages
+    // .filter(img => !requiredImagesFileMDU.map(req => req.tag).includes(img.id))
 
     const survey = customerConnection.documents.find(res => res.tag === "survey_sheet")
     const survey_mdu = customerConnection.documents.find(res => res.tag === "survey_sheet_mdu")
@@ -139,7 +153,12 @@ export default function TrackerID(){
             customerID={customerConnection.id}
           />
 
-          <CustomerRequiredImages imagesToAdd={imagesToAdd} uploadedImagesFile={requiredImagesFile}/>
+          <CustomerRequiredImages
+            imagesToAdd={imagesToAdd}
+            uploadedImagesFile={requiredImagesFile}
+            customerID={customerConnection.id}
+            requiredImages={requiredImages}
+          />
 
           {customerConnection.has_mdu && <CustomerMapsUpload
             maps={[{resource: map_1ImageMDU, tag: "map_1_mdu"}, {resource: map_2ImageMDU, tag: "map_2_mdu"}]}
@@ -151,6 +170,8 @@ export default function TrackerID(){
             imagesToAdd={imagesToAddMDU}
             uploadedImagesFile={requiredImagesFileMDU}
             mdu
+            customerID={customerConnection.id}
+            requiredImages={requiredMDUImages}
           />}
 
           <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">

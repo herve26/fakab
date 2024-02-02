@@ -4,16 +4,22 @@ import  { type UploadHandler } from '@remix-run/node';
 
 // Upload a file to Cloud Storage
 
-type UploadStorageType = {
-  filename: string, 
-  fileStream: AsyncIterable<Uint8Array>,
-  makePublic?: boolean
-}
+// type UploadStorageType = {
+//   filename: string, 
+//   fileStream: AsyncIterable<Uint8Array>,
+//   makePublic?: boolean
+// }
 
-export const uploadStreamToCloudStorage = async ({filename, fileStream, makePublic=false}: UploadStorageType) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const uploadStreamToCloudStorage: UploadHandler = async ({name,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  contentType,
+  filename,
+  data}) => {
   const bucketName = process.env["GOOGLE_CLOUD_BUCKET"]
 
   if(!bucketName) throw new Error("Bucket Name is Required")
+  if(!filename) throw new Error("Filename is mandatory")
 
   // Create Cloud Storage client
   const cloudStorage = new Storage();
@@ -23,16 +29,14 @@ export const uploadStreamToCloudStorage = async ({filename, fileStream, makePubl
 
   // Create a pass through stream from a string
   const passthroughStream = new stream.PassThrough();
-  for await (const chunk of fileStream) {
+  for await (const chunk of data) {
     passthroughStream.write(chunk);
   }
   passthroughStream.end();
 
   async function streamFileUpload() {
     passthroughStream.pipe(file.createWriteStream()).on('finish', async () => {
-      if(makePublic){
-        await file.makePublic()
-      }
+      await file.makePublic()
     });
 
     console.log(`${filename} uploaded to ${bucketName}`);
@@ -40,18 +44,30 @@ export const uploadStreamToCloudStorage = async ({filename, fileStream, makePubl
 
   await streamFileUpload().catch(console.error);
 
-  return makePublic ? file.publicUrl() : filename
+  return file.publicUrl()
 };
 
-export const cloudStorageUploaderHandler: UploadHandler = async ({
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    name,
-    filename,
-    data,
-}) => {
-    if (filename) {
-        return await uploadStreamToCloudStorage({filename, fileStream: data});
-    }
+// export const cloudStorageUploaderHandler: UploadHandler = async ({
+//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//     name,
+//     filename,
+//     data,
+// }) => {
 
-    return null
-};
+//   if(!regex.test(name) || !filename) return undefined;
+
+//   // return await uploadStreamToCloudStorage({name, filename, data});
+// };
+
+// export const uploadToStorage = async ({filename, fileStream, makePublic=false}: UploadStorageType) => {
+//   const env = process.env["NODE_ENV"]
+
+//   if(env === "production"){
+//     return await uploadStreamToCloudStorage({filename, fileStream, makePublic})
+//   } else {
+//     const directory = path.join(__dirname, "..", "..", "public", "resources");
+//     return unstable_createFileUploadHandler({
+//       directory
+//     })
+//   }
+// }

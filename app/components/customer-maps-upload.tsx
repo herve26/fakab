@@ -1,20 +1,9 @@
 import { useFetcher } from "@remix-run/react";
 import FileSelectUpload from "./file-select-upload.tsx";
+import { DocumentResource } from "./customer-images.tsx";
 
 type ResourceUploadProp = {
-    resource: {
-        id: number;
-        name: string;
-        content_type: string | null;
-        size: number | null;
-        tag: string | null;
-        url: string | null;
-        path: string;
-        created_at: string;
-        updated_at: string | null;
-        customerid: string | null;
-        document_templateid: number | null;
-    } | null | undefined,
+    resource: DocumentResource | null | undefined,
     tag: string,
 }
 
@@ -26,6 +15,21 @@ export function ResourceUpload({doc, title}: {doc: ResourceUploadProp, customerI
       formData.append("id", `${id}`)
       fetcher.submit(formData, { method: "POST", action: "/api/delete-resource"})
     }
+    
+    const isSubmitting = fetcher.state === "submitting"
+
+    const handleSubmit = (files: File[], name: string, tag: string) => {
+        if(files.length > 0){
+            const formData = new FormData()
+
+            formData.append("name", name)
+            formData.append("tag", tag)
+            formData.append("resource", files[0])
+
+            fetcher.submit(formData, { method: "POST", encType: "multipart/form-data"})
+        }
+        
+    }
 
     return (
         <div className="min-h-[80vh] flex flex-col">
@@ -36,6 +40,11 @@ export function ResourceUpload({doc, title}: {doc: ResourceUploadProp, customerI
                 >X</button>
                 {doc.resource.url && <img src={doc.resource.url} alt={title}/>}
             </div> )}
+            {!doc.resource && <FileSelectUpload
+                title={title}
+                submitting={isSubmitting} 
+                onSubmit={(files) => handleSubmit(files, title, doc.tag)}
+            />}
         </div>
     )
 }
@@ -72,16 +81,21 @@ export default function CustomerMapsUpload({maps, mdu=false}: Props){
             </div>
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
                 <div className="grid grid-cols-2 gap-x-4 min-h-[80vh]">
-                    <FileSelectUpload
+                    {(maps[0].resource && maps[0].resource.url) ? 
+                        <img src={maps[0].resource.url} alt={maps[0].tag}/>
+                    : <FileSelectUpload
                         title="Detailed Map" 
                         submitting={isSubmitting}
                         onSubmit={(files) => handleSubmit(files, "Detailed Map", maps[0].tag)}
-                    />
+                    />}
+                    {(maps[1].resource && maps[1].resource.url) ?
+                    <img src={maps[1].resource.url} alt={maps[1].tag}/>
+                    :
                     <FileSelectUpload
                         title="Drawn Map"
                         submitting={isSubmitting} 
                         onSubmit={(files) => handleSubmit(files, "Detailed Map", maps[1].tag)}
-                    />
+                    />}
               </div>
             </div>
         </div>

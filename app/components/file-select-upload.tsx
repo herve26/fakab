@@ -35,6 +35,7 @@ function FileSelectUpload({ single, title, submitting, onSubmit }: Props) {
       }
       
       setFiles(Array.from(droppedFiles))
+      
       Array.from(droppedFiles).map(f => {
         const reader = new FileReader();
         
