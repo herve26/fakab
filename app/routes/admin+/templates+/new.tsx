@@ -21,8 +21,8 @@ export async function action({ request }: ActionFunctionArgs) {
   console.log(parsedData)
 
   try {
-    await supabaseClient.from("document_template").insert(parsedData.value)
-
+    const {error} = await supabaseClient.from("document_template").insert(parsedData.value)
+    console.error(error)
     return redirect("/admin/templates")
   
   } catch (error) {
