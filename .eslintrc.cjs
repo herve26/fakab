@@ -19,6 +19,7 @@ module.exports = {
     commonjs: true,
     es6: true,
   },
+  ignorePatterns:["supabase.ts"],
 
   // Base config
   extends: ["eslint:recommended"],
