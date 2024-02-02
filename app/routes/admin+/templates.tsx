@@ -41,11 +41,13 @@ export async function action({request}: ActionFunctionArgs){
       }
 
       try {
-        await supabaseClient.from("document_resource").insert({
+        const {error} = await supabaseClient.from("document_resource").insert({
             path: path,
             url: parsedData.value.resource,
             document_templateid: parsedData.value.templateId
         })
+
+        console.log(error)
 
         return json({status: "Success" })
 
