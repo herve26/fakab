@@ -87,3 +87,8 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+.RadixSelectContent {
+	width: var(--radix-select-trigger-width);
+	max-height: var(--radix-select-content-available-height);
+}

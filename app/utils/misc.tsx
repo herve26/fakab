@@ -221,7 +221,7 @@ export function useDoubleCheck() {
 				: e => {
 						e.preventDefault()
 						setDoubleCheck(true)
-				  }
+					}
 
 		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] =
 			e => {
@@ -284,9 +284,9 @@ export async function downloadFile(url: string, retries: number = 0) {
 		if (!response.ok) {
 			throw new Error(`Failed to fetch image with status ${response.status}`)
 		}
-		const contentType = response.headers.get('content-type') ?? 'image/jpg'
+		const content_type = response.headers.get('content-type') ?? 'image/jpg'
 		const blob = Buffer.from(await response.arrayBuffer())
-		return { contentType, blob }
+		return { content_type, blob }
 	} catch (e) {
 		if (retries > MAX_RETRIES) throw e
 		return downloadFile(url, retries + 1)
