@@ -27,6 +27,13 @@ export const uploadStreamToCloudStorage: UploadHandler = async ({name,
   // Create a reference to the file.
   const file = cloudStorage.bucket(bucketName).file(filename);
 
+  // const exist = await file.exists()
+
+  // TODO: Implement collision resistance
+  // if(exist){
+  //   file = cloudStorage.bucket(bucketName).file()
+  // }
+
   // Create a pass through stream from a string
   const passthroughStream = new stream.PassThrough();
   for await (const chunk of data) {

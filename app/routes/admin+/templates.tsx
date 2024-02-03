@@ -23,7 +23,7 @@ export async function action({request}: ActionFunctionArgs){
 
   const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(process.env["NODE_ENV"] === "production" ? async ({name, filename, data, contentType}) => {
     if(!regex.test(name) || !filename) return undefined;
-    const pt = `$Templates/${Date.now()}_${filename}` 
+    const pt = `Templates/${Date.now()}_${filename}` 
     path = pt
     return await uploadStreamToCloudStorage({name, filename, data, contentType})
   } : async ({name, filename, data, contentType}) => { 

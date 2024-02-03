@@ -15,6 +15,7 @@ import MaterialAdd from "#app/components/molecules/material-add.tsx";
 import { Button } from "#app/components/ui/button.tsx";
 import { getShortID, getUUID } from "#app/utils/uuid.server.ts";
 import p from "node:path";
+import { nanoid } from "nanoid";
 
 const schema = z.object({
   name: z.string(),
@@ -33,7 +34,7 @@ export async function action({params, request}: ActionFunctionArgs){
 
   const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(process.env["NODE_ENV"] === "production" ? async ({name, filename, data, contentType}) => {
     if(!regex.test(name) || !filename) return undefined;
-    const pt = `${id}/${Date.now()}_${filename}` 
+    const pt = `CustomerConnection/${id}/${nanoid()}`
     path = pt 
     return await uploadStreamToCloudStorage({name, filename, data, contentType})
   } : async ({name, filename, data, contentType}) => { 
