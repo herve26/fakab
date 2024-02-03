@@ -27,7 +27,7 @@ const schema = z.object({
       if(!regex.test(name) || !filename) return undefined;
       const pt = `CustomerConnections/${id}/Documents/${nanoid()}.${p.extname(filename)}`
       path = pt 
-      return await uploadStreamToCloudStorage({name, filename, data, contentType})
+      return await uploadStreamToCloudStorage({name, filename: pt, data, contentType})
     } : async ({name, filename, data, contentType}) => { 
       if(!regex.test(name)) return undefined
       const handler = unstable_createFileUploadHandler({directory: p.join(process.cwd(), "public", "resources")})

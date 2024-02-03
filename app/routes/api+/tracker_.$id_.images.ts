@@ -28,7 +28,7 @@ console.log(shortid)
     if(!regex.test(name) || !filename) return undefined;
     const path = `CustomerConnections/${id}/Images/${nanoid()}${p.extname(filename)}` 
     paths.push(path)
-    return await uploadStreamToCloudStorage({name, filename, data, contentType})
+    return await uploadStreamToCloudStorage({name, filename: path, data, contentType})
   } : async ({name, filename, data, contentType}) => { 
     if(!regex.test(name)) return undefined
     const handler = unstable_createFileUploadHandler({directory: p.join(process.cwd(), "public", "resources")})
