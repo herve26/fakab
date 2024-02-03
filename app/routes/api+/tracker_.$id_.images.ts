@@ -6,6 +6,7 @@ import { ActionFunctionArgs, NodeOnDiskFile, json, unstable_composeUploadHandler
 import { z } from "zod"
 import p from "node:path";
 import shortUUID from "short-uuid"
+import { nanoid } from "nanoid"
 
 const schema = z.object({
     names: z.string().array(),
@@ -25,9 +26,9 @@ console.log(shortid)
 
   const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(process.env["NODE_ENV"] === "production" ? async ({name, filename, data, contentType}) => {
     if(!regex.test(name) || !filename) return undefined;
-    const path = `${id}/${Date.now()}_${filename}` 
+    const path = `CustomerConnections/${id}/Images/${nanoid()}${p.extname(filename)}` 
     paths.push(path)
-    return await uploadStreamToCloudStorage({name, filename, data, contentType})
+    return await uploadStreamToCloudStorage({name, filename: path, data, contentType})
   } : async ({name, filename, data, contentType}) => { 
     if(!regex.test(name)) return undefined
     const handler = unstable_createFileUploadHandler({directory: p.join(process.cwd(), "public", "resources")})

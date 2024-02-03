@@ -1,4 +1,5 @@
 import { supabaseClient } from "#app/utils/supa.server.ts";
+import { getShortID } from "#app/utils/uuid.server.ts";
 import { parse } from "@conform-to/zod";
 import { invariantResponse } from "@epic-web/invariant";
 import { json, type ActionFunctionArgs, redirect } from "@remix-run/node";
@@ -33,7 +34,7 @@ export async function action({ request }: ActionFunctionArgs){
         console.error(error)
         invariantResponse(data, "Unable to Create new Connection")
     
-        return redirect(`/tracker/${data.so}`)
+        return redirect(`/admin/tracker/${getShortID(data.id)}`)
     }
     catch(e){
         console.log(e)

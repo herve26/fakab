@@ -9,6 +9,7 @@ import { Button } from "#app/components/ui/button.tsx";
 import { uploadStreamToCloudStorage } from "#app/utils/uploader.server.ts";
 import { supabaseClient } from "#app/utils/supa.server.ts";
 import p from "node:path";
+import { nanoid } from "nanoid";
 
 const schema = z.object({
     resourceName: z.string(),
@@ -19,13 +20,13 @@ const schema = z.object({
 export async function action({request}: ActionFunctionArgs){
     let path = ""
 
-  const regex = new RegExp(/^resource$/);
+    const regex = new RegExp(/^resource$/);
 
   const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(process.env["NODE_ENV"] === "production" ? async ({name, filename, data, contentType}) => {
     if(!regex.test(name) || !filename) return undefined;
-    const pt = `$Templates/${Date.now()}_${filename}` 
+    const pt = `Templates/${nanoid()}${p.extname(filename)}` 
     path = pt
-    return await uploadStreamToCloudStorage({name, filename, data, contentType})
+    return await uploadStreamToCloudStorage({name, filename:pt, data, contentType})
   } : async ({name, filename, data, contentType}) => { 
     if(!regex.test(name)) return undefined
     const handler = unstable_createFileUploadHandler({directory: p.join(process.cwd(), "public", "resources", "templates")})

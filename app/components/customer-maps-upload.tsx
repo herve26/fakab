@@ -56,7 +56,7 @@ type Props = {
     mdu?: boolean;
 }
 
-export default function CustomerMapsUpload({maps, mdu=false}: Props){
+export default function CustomerMapsUpload({maps, mdu=false, customerID}: Props){
 
     const fetcher = useFetcher()
     const isSubmitting = fetcher.state === "submitting"
@@ -69,7 +69,7 @@ export default function CustomerMapsUpload({maps, mdu=false}: Props){
             formData.append("tag", tag)
             formData.append("resource", files[0])
 
-            fetcher.submit(formData, { method: "POST", encType: "multipart/form-data"})
+            fetcher.submit(formData, { method: "POST", encType: "multipart/form-data", action:`/api/tracker/${customerID}/maps`})
         }
         
     }
