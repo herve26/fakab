@@ -16,6 +16,8 @@ export async function action({request}: ActionFunctionArgs){
 
     const { data } = schema.parse(await request.json())
 
+    console.log(data)
+
     try{
         await supabaseClient.from("document_resource").upsert(data)
         return true

@@ -25,7 +25,7 @@ const schema = z.object({
   
     const formData = await unstable_parseMultipartFormData(request, unstable_composeUploadHandlers(process.env["NODE_ENV"] === "production" ? async ({name, filename, data, contentType}) => {
       if(!regex.test(name) || !filename) return undefined;
-      const pt = `CustomerConnections/${id}/Documents/${nanoid()}.${p.extname(filename)}`
+      const pt = `CustomerConnections/${id}/Documents/${nanoid()}${p.extname(filename)}`
       path = pt 
       return await uploadStreamToCloudStorage({name, filename: pt, data, contentType})
     } : async ({name, filename, data, contentType}) => { 
