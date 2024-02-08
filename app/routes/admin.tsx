@@ -1,4 +1,20 @@
+import { getSupabaseClient } from "#app/utils/supa.server.ts";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { Link, Outlet, UIMatch, useMatches } from "@remix-run/react";
+
+export async function loader({request}: LoaderFunctionArgs){
+    const headers = new Headers()
+    const supabase = getSupabaseClient(request.headers.get('Cookie') ?? '', headers)
+    const { data: { user }, error } = await supabase.auth.getUser()
+    
+    if(error || !user){
+        return redirect("/login", {headers})
+    }
+
+    return json({user: user}, { headers })
+}
+
+
 
 type BreadcrumbData = {
     route: string,
@@ -13,8 +29,8 @@ export default function Admin(){
     const matches = useMatches() as UIMatch<unknown, MatchData>[];
     
     return(
-        <div className="border border-red-500">
-            <ol className="flex items-center space-x-2 text-sm font-medium border border-blue-500 px-8 mt-4">
+        <div className="">
+            <ol className="flex items-center space-x-2 text-sm font-medium px-8 mt-4">
                 {matches
                 .filter(
                     (match) =>
@@ -42,5 +58,3 @@ export default function Admin(){
     )
     
 }
-
-{/*  */}

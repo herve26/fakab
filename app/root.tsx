@@ -41,7 +41,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-stone-100 flex flex-col h-screen">
         <Header/>
         <Outlet />
         <ScrollRestoration />
