@@ -5,6 +5,7 @@ node_modules
 /public/build
 .env
 /public/resources
+/public/images
 
 package-lock.json
 service-account.json
