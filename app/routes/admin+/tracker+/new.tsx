@@ -3,7 +3,7 @@ import { getShortID } from "#app/utils/uuid.server.ts";
 import { parse } from "@conform-to/zod";
 import { invariantResponse } from "@epic-web/invariant";
 import { json, type ActionFunctionArgs, redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 
 const schema = z.object({
@@ -16,7 +16,8 @@ const schema = z.object({
     has_mdu: z.boolean().optional(),
     area: z.string(),
     geo_localization: z.string(),
-    connection_type: z.string()
+    connection_type: z.string(),
+    batch_code: z.string().optional()
 })
 
 export async function action({ request }: ActionFunctionArgs){
@@ -40,11 +41,19 @@ export async function action({ request }: ActionFunctionArgs){
         console.log(e)
         return json({error: true})
     }
-
     
 }
 
+export async function loader(){
+    const { data } = await supabaseClient.from("batch").select("batch_code")
+    invariantResponse(data, "Unable to load Batches")
+
+    return json({batches: data})
+}
+
 export default function NewConnection(){
+    const { batches } = useLoaderData<typeof loader>()
+
     return (
         <div className="flex flex-col px-8">
           <h1 className="mb-5 text-3xl font-bold">Create Customer Connection</h1>
@@ -66,6 +75,10 @@ export default function NewConnection(){
                     <input name="has_mdu" placeholder="Connection With MDU?" type="checkbox" className="mr-4"/>
                     Has MDU?
                 </label>
+                <select name="batch_code" className="block w-full p-2 border border-gray-300 rounded">
+                    <option value="">NA</option>
+                    {batches.map(batch => <option key={batch.batch_code} value={batch.batch_code}>{batch.batch_code}</option>)}
+                </select>
             </div>
             <div className="sm:max-w-[50%] mx-auto">
                 <button type="submit" className="w-full py-2 px-4 bg-primary text-white rounded hover:bg-blue-700">Submit</button>

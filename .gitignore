@@ -6,6 +6,7 @@ node_modules
 .env
 /public/resources
 /public/images
+/coverage
 
 package-lock.json
 service-account.json

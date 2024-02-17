@@ -6,6 +6,7 @@ import { z } from 'zod';
 import TextLabel from '#app/components/molecules/text-label.tsx';
 import { supabaseClient } from '#app/utils/supa.server.ts';
 import { getShortID } from '#app/utils/uuid.server.ts';
+import { Tables } from '#types/supabase.ts';
 
 const materialSchema = z.object({
 	id: z.number(),
@@ -42,12 +43,35 @@ export async function action({request}: ActionFunctionArgs){
 	return null
 }
 
+function convertToArrayOfObjectsByCode(data: Tables<"customer_connection">[]) {
+	const codeObject: {[key: string]: Tables<"customer_connection">[]} = { "NA": [] }; // Add a key for null codes
+  
+	for (const item of data) {
+		const code = item.batch_code;
+  
+		if (code !== null) {
+			if (!(code in codeObject)) {
+				codeObject[code] = [];
+			}
+  
+			codeObject[code].push(item);
+		} else {
+			codeObject["NA"].push(item); // Group items with null code
+		}
+	}
+  
+	return codeObject;
+  }
+  
+  
+
 export async function loader() {
 	const { data } = await supabaseClient.from("customer_connection").select()
 
 	if(!data) throw new Error("Unable to Get Value")
+	const connections = convertToArrayOfObjectsByCode(data.map(conn => ({...conn, id: getShortID(conn.id)})))
 
-	return json({connections: data.map(conn => ({...conn, id: getShortID(conn.id)}))});
+	return json({connections});
 }
 
 function CustomerConnectionsList() {
@@ -59,7 +83,32 @@ function CustomerConnectionsList() {
 				<h2 className="text-xl font-bold">Customer Connections</h2>
 				<Link to="new" className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>New</Link>
 			</div>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+			<div>
+				{Object.keys(connections).map(k => 
+					<div key={k} className='border-t-2 border-slate-500 px-4 py-2 mb-4'>
+						<h3 className='text-xl font-bold rounded py-2 mb-3 px-4 bg-white'>{k}</h3>
+						<BatchSection connections={connections[k]}/>
+					</div>
+				)}
+			</div>
+			
+			{Object(connections).length === 0 && <div className='flex flex-col items-center justify-center h-full'>
+				<h3 className='text-lg font-bold'>No Connection</h3>
+				<Link to='new' className='bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2'>
+					Add Connection
+				</Link>
+			</div>}
+		</div>
+	);
+}
+
+type BatchSectionProps = {
+	connections: Tables<"customer_connection">[]
+}
+
+function BatchSection({connections}: BatchSectionProps){
+	return(
+		<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{connections.map((connection) => (
 					<div key={connection.id} className="border border-slate-200 bg-white rounded-lg shadow-md p-4">
 						<div className="flex items-center justify-between pb-4 mb-4 border-b-2 border-slate-200">
@@ -81,6 +130,7 @@ function CustomerConnectionsList() {
 									<a href={`https://wa.me/${connection.customer_contact.replaceAll("-","")}`} className='mr-2'>WA</a>
 								</div>
 							}/>
+							<TextLabel label="Batch" text={connection.batch_code ?? "NA"}/>
 						</div>
 						<div className="flex justify-between mt-4 pt-4 border-t-2 border-slate-200">
 							<Link to={`${connection.id}`} className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -94,14 +144,8 @@ function CustomerConnectionsList() {
 					</div>
 				))}
 			</div>
-			{connections.length === 0 && <div className='flex flex-col items-center justify-center h-full'>
-				<h3 className='text-lg font-bold'>No Connection</h3>
-				<Link to='new' className='bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2'>
-					Add Connection
-				</Link>
-			</div>}
-		</div>
-	);
+	)
 }
+
 
 export default CustomerConnectionsList;
