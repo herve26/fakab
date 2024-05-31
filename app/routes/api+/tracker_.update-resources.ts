@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const dataShape = z.object({
     id: z.number(),
-    for_report: z.boolean()
+    for_report: z.boolean().optional()
 })
 
 const schema = z.object({

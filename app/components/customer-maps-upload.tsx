@@ -15,7 +15,7 @@ export function ResourceUpload({doc, title}: {doc: ResourceUploadProp, customerI
       formData.append("id", `${id}`)
       fetcher.submit(formData, { method: "POST", action: "/api/delete-resource"})
     }
-    
+     
     const isSubmitting = fetcher.state === "submitting"
 
     const handleSubmit = (files: File[], name: string, tag: string) => {
@@ -74,6 +74,12 @@ export default function CustomerMapsUpload({maps, mdu=false, customerID}: Props)
         
     }
 
+    const deleteResource = (id: number) => {
+        const formData = new FormData()
+        formData.append("id", `${id}`)
+        fetcher.submit(formData, { method: "POST", action: "/api/delete-resource"})
+      }
+
     return (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6 bg-primary">
@@ -82,15 +88,26 @@ export default function CustomerMapsUpload({maps, mdu=false, customerID}: Props)
             <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
                 <div className="grid grid-cols-2 gap-x-4 min-h-[80vh]">
                     {(maps[0].resource && maps[0].resource.url) ? 
-                        <img src={maps[0].resource.url} alt={maps[0].tag}/>
+                        <div className="relative">
+                            <img src={maps[0].resource.url} alt={maps[0].tag}/>
+                            <button
+                                className="absolute right-4 top-4 rounded-full bg-primary text-white h-8 w-8"
+                                onClick={() => maps[0].resource && deleteResource(maps[0].resource.id)}
+                            >X</button>
+                        </div>
                     : <FileSelectUpload
                         title="Detailed Map" 
                         submitting={isSubmitting}
                         onSubmit={(files) => handleSubmit(files, "Detailed Map", maps[0].tag)}
                     />}
                     {(maps[1].resource && maps[1].resource.url) ?
-                    <img src={maps[1].resource.url} alt={maps[1].tag}/>
-                    :
+                    <div className="relative">
+                        <img src={maps[1].resource.url} alt={maps[1].tag}/>
+                        <button
+                            className="absolute right-4 top-4 rounded-full bg-primary text-white h-8 w-8"
+                            onClick={() => maps[1].resource && deleteResource(maps[1].resource.id)}
+                        >X</button>
+                    </div>:
                     <FileSelectUpload
                         title="Drawn Map"
                         submitting={isSubmitting} 

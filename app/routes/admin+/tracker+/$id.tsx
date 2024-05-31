@@ -119,6 +119,8 @@ export default function TrackerID(){
 
     const survey = customerConnection.documents.find(res => res.tag === "survey_sheet")
     const survey_mdu = customerConnection.documents.find(res => res.tag === "survey_sheet_mdu")
+
+    const pat_sheet = customerConnection.documents.find(res => res.tag === "pat_sheet")
     
     return (
         <div className="flex flex-col space-y-4 px-2 md:px-6 mb-6">
@@ -197,10 +199,25 @@ export default function TrackerID(){
               </div>
             </div>
             <div className="p-4">
-            <ResourceUpload
+              <ResourceUpload
                 doc={{resource: survey_mdu, tag: "survey_sheet_mdu"}}
                 customerID={customerConnection.id}
                 title="Survey Sheet MDU"
+              />
+            </div>
+          </div>}
+
+          {customerConnection.has_mdu && <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+            <div className="px-4 py-5 sm:px-6 bg-primary">
+              <div className="flex space-x-5">
+                <h2 className="text-lg leading-6 font-medium text-white">PAT Sheet MDU</h2>
+              </div>
+            </div>
+            <div className="p-4">
+              <ResourceUpload
+                doc={{resource: pat_sheet, tag: "pat_sheet"}}
+                customerID={customerConnection.id}
+                title="PAT Sheet MDU"
               />
             </div>
           </div>}

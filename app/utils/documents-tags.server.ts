@@ -7,7 +7,8 @@ export const requiredCCImages = [
     {id: "power_reading", label: "Power Reading"}, 
     {id: "path_cable", label: "Path Cable"},
     {id: "labelling", label: "Customer Labelling"},
-    {id: "signal_origin", label: "Debut Signal(MDU/JB)"}
+    {id: "signal_origin", label: "Debut Signal(MDU/JB)"},
+    {id: "lovage_origin", label: "Lovage MDU/JB"}
   ]
   
   export const requiredCCMDUImages = [

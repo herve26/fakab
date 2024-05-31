@@ -84,7 +84,7 @@ function CustomerConnectionsList() {
 				<Link to="new" className='bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>New</Link>
 			</div>
 			<div>
-				{Object.keys(connections).map(k => 
+				{Object.keys(connections).reverse().map(k => 
 					<div key={k} className='border-t-2 border-slate-500 px-4 py-2 mb-4'>
 						<h3 className='text-xl font-bold rounded py-2 mb-3 px-4 bg-white'>{k}</h3>
 						<BatchSection connections={connections[k]}/>

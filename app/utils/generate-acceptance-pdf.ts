@@ -80,6 +80,8 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     form.updateFieldAppearances(TimeRoman)
 
     for (let idx = 0; idx < images.length; idx++) {
+        if(idx >= 8) break;
+
         const imageEmb = await pdfDoc.embedJpg(images[idx].buffer);
 
         const page5_image = form.getTextField(`page5_image_${idx + 1}`)
@@ -132,15 +134,36 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
             await downloadIntoMemory({fileName: survey_sheet.path}) :
             await fs.readFile(`${process.cwd()}/public/${survey_sheet.url}`)
         const last_page = pdfDoc.addPage(PageSizes.A4)
-        console.log("page Size", PageSizes.A4)
+        
         const sheet_image = await pdfDoc.embedJpg(sheet)
-        const sheetDims = sheet_image.scale(0.35)
+        // const sheetDims = sheet_image.scale(0.35)
+        const [w, h] = PageSizes.A4
         last_page.drawImage(sheet_image,{
             x: 0,
             y: 0,
-            width: sheetDims.width,
-            height: sheetDims.height
+            width: w,
+            height: h
         })
+    }
+
+    if(mdu){
+        const pat_sheet = connection.documents.find(res => res.tag === "pat_sheet")
+
+        if(pat_sheet){
+            const sheet = process.env["NODE_ENV"] === "production" ? 
+                await downloadIntoMemory({fileName: pat_sheet.path}) :
+                await fs.readFile(`${process.cwd()}/public/${pat_sheet.url}`)
+            
+            const last_page = pdfDoc.addPage(PageSizes.A4)
+            const sheet_image = await pdfDoc.embedJpg(sheet)
+            const [w, h] = PageSizes.A4
+            last_page.drawImage(sheet_image, {
+                x: 0,
+                y: 0,
+                width: w,
+                height: h
+            })
+        }
     }
 
     form.flatten()
