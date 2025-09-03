@@ -8,6 +8,21 @@ type Point = {
     longitude: number
 }
 
+/**
+ * @typedef {object} Point
+ * @property {string} tag - The tag for the point.
+ * @property {"START" | "END" | "WAY"} type - The type of the point.
+ * @property {number} accuracy - The accuracy of the point.
+ * @property {number} latitude - The latitude of the point.
+ * @property {number} longitude - The longitude of the point.
+ */
+
+/**
+ * @typedef {object} PathData
+ * @property {Omit<Point, "type"> & { type: "START" }} startPoint - The starting point of the path.
+ * @property {Omit<Point, "type"> & { type: "END" }} endPoint - The ending point of the path.
+ * @property {(Omit<Point, "type"> & { type: "WAY" })[]} wayPoints - An array of waypoints in the path.
+ */
 export type PathData = {
     startPoint: Omit<Point, "type"> & { type: "START" },
     endPoint: Omit<Point, "type"> & { type: "END" },
@@ -15,6 +30,12 @@ export type PathData = {
 }
 
 
+/**
+ * Creates a KML document string from path data.
+ *
+ * @param {PathData} data - The path data to use for creating the KML document.
+ * @returns {string} The KML document as a string.
+ */
 export const createKMLDocument = (data: PathData) => {
 
     const builder = new xml2js.Builder();

@@ -9,6 +9,13 @@ type Props = {
     address: string | null;
 }
 
+/**
+ * A card component that displays summary information about a supplier.
+ *
+ * @param {object} props - The props for the component.
+ * @param {Props} props.supplier - The supplier information.
+ * @returns {JSX.Element} The supplier card component.
+ */
 const SupplierCard = ({ supplier }: { supplier: Props}) => {
     return (
         <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg">

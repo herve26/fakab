@@ -8,6 +8,17 @@ type BreadcrumbProps = {
     direction: 'start' | 'end'
 }
 
+/**
+ * A single item in a breadcrumb trail.
+ *
+ * @param {BreadcrumbProps} props - The props for the component.
+ * @param {ReactNode} props.children - The content of the breadcrumb item.
+ * @param {string} props.link - The URL the breadcrumb item links to.
+ * @param {boolean} props.isCurrent - Whether the breadcrumb item is the current page.
+ * @param {boolean} props.triangle - Whether to display a triangle separator.
+ * @param {'start' | 'end'} props.direction - The direction of the triangle separator.
+ * @returns {JSX.Element} The breadcrumb item component.
+ */
 export const BreadcrumbItem = ({ children, link, isCurrent, triangle, direction }: BreadcrumbProps) => (
   <li
     className={`
@@ -50,6 +61,13 @@ type BreadcrumbsProps = {
     items: BreadcrumbProps[],
 }
 
+/**
+ * A breadcrumb trail component.
+ *
+ * @param {BreadcrumbsProps} props - The props for the component.
+ * @param {BreadcrumbProps[]} props.items - An array of breadcrumb item props.
+ * @returns {JSX.Element} The breadcrumbs component.
+ */
 const Breadcrumbs = ({ items }: BreadcrumbsProps) => (
   <ul className="breadcrumbs flex items-center space-x-2">
     {items.map((item, index) => (

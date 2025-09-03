@@ -8,6 +8,13 @@ const labelVariants = cva(
 	'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
 )
 
+/**
+ * A label component, based on Radix UI's Label.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the label.
+ * @returns {JSX.Element} The label component.
+ */
 const Label = React.forwardRef<
 	React.ElementRef<typeof LabelPrimitive.Root>,
 	React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &

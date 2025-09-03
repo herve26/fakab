@@ -11,6 +11,16 @@ type StatusHandler = (info: {
 	params: Record<string, string | undefined>
 }) => JSX.Element | null
 
+/**
+ * A general error boundary component for Remix routes.
+ * It handles different types of errors and displays appropriate messages.
+ *
+ * @param {object} props - The props for the component.
+ * @param {StatusHandler} [props.defaultStatusHandler] - The default handler for status responses.
+ * @param {Record<number, StatusHandler>} [props.statusHandlers] - A map of status handlers for specific status codes.
+ * @param {(error: unknown) => JSX.Element | null} [props.unexpectedErrorHandler] - The handler for unexpected errors.
+ * @returns {JSX.Element} The error boundary component.
+ */
 export function GeneralErrorBoundary({
 	defaultStatusHandler = ({ error }) => (
 		<p>

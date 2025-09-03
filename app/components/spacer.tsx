@@ -1,3 +1,10 @@
+/**
+ * A component that adds vertical space.
+ *
+ * @param {object} props - The props for the component.
+ * @param {'4xs' | '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'} props.size - The size of the space.
+ * @returns {JSX.Element} The spacer component.
+ */
 export function Spacer({
 	size,
 }: {

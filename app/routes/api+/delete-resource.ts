@@ -7,6 +7,13 @@ const schema = z.object({
     id: z.number()
 })
 
+/**
+ * The action function for the delete resource route.
+ * It handles the deletion of a document resource.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action ({ request }: ActionFunctionArgs) {
     const formData = await request.formData()
 

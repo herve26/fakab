@@ -2,6 +2,13 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import React from 'react';
 
+/**
+ * A styled dialog content component based on Radix UI's Dialog.
+ *
+ * @param {object} props - The props for the component.
+ * @param {React.ReactNode} props.children - The content of the dialog.
+ * @returns {JSX.Element} The dialog content component.
+ */
 export const DialogContent = React.forwardRef<
     React.ElementRef<typeof DialogPrimitive.Content>,
     React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>>

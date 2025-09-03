@@ -19,6 +19,13 @@ const schema = z.object({
     connection_type: z.string()
 })
 
+/**
+ * The action function for the new connection route.
+ * It handles the form submission for creating a new customer connection.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({ request }: ActionFunctionArgs){
     const formData = await request.formData()
 
@@ -44,6 +51,12 @@ export async function action({ request }: ActionFunctionArgs){
     
 }
 
+/**
+ * The component for creating a new customer connection.
+ * It displays a form for creating a new customer connection.
+ *
+ * @returns {JSX.Element} The new connection component.
+ */
 export default function NewConnection(){
     return (
         <div className="flex flex-col px-8">

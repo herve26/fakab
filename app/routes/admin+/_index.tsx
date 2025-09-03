@@ -7,6 +7,14 @@ type CardProps = {
     children: ReactNode;
 }
 
+/**
+ * A card component that links to a page.
+ *
+ * @param {CardProps} props - The props for the component.
+ * @param {string} props.to - The URL to link to.
+ * @param {ReactNode} props.children - The content of the card.
+ * @returns {JSX.Element} The card component.
+ */
 export function Card({to, children}: CardProps){
     return(
         <Link to={to} className="bg-white rounded-md border hover:shadow-md text-2xl flex items-center justify-center py-12">
@@ -17,6 +25,12 @@ export function Card({to, children}: CardProps){
     )
 }
 
+/**
+ * The index route for the admin section.
+ * It displays a grid of cards that link to different admin pages.
+ *
+ * @returns {JSX.Element} The admin index route component.
+ */
 export default function IndexRoute(){
     return(
         <div className="px-2 md:px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4">

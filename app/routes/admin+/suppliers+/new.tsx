@@ -14,6 +14,13 @@ const supplierSchema = z.object({
   supplier_type: z.enum(["MERCHANT", "REFILL"]).default("MERCHANT"),
 });
 
+/**
+ * The action function for the new supplier route.
+ * It handles the form submission for creating a new supplier.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response | null>} A promise that resolves with a response or null.
+ */
 export async function action({request}: ActionFunctionArgs){
     const submission = parse(await request.formData(), { schema: supplierSchema})
     if(!submission.value) return null
@@ -27,7 +34,12 @@ export async function action({request}: ActionFunctionArgs){
     }
 }
 
-// Define a custom component called AddSupplier
+/**
+ * The component for adding a new supplier.
+ * It displays a form for creating a new supplier.
+ *
+ * @returns {JSX.Element} The add supplier component.
+ */
 function AddSupplier() {
   // Return the JSX code for rendering the component
   return (

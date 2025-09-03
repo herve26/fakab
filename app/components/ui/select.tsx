@@ -3,6 +3,15 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 import React from 'react';
 import { Icon } from './icon.tsx';
 
+/**
+ * A select component, based on Radix UI's Select.
+ *
+ * @param {object} props - The props for the component.
+ * @param {React.ReactNode} props.children - The content of the select component.
+ * @param {string} [props.placeholder] - The placeholder for the select component.
+ * @param {string} [props.id] - The ID of the select component.
+ * @returns {JSX.Element} The select component.
+ */
 export const Select = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Root>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & {
@@ -36,6 +45,13 @@ export const Select = React.forwardRef<
 
 Select.displayName = "Select"
 
+/**
+ * An item in a select component, based on Radix UI's Select.
+ *
+ * @param {object} props - The props for the component.
+ * @param {React.ReactNode} props.children - The content of the select item.
+ * @returns {JSX.Element} The select item component.
+ */
 export const SelectItem = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Item>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>

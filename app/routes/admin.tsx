@@ -9,6 +9,12 @@ interface MatchData {
     breadcrumb?: (match: unknown) => BreadcrumbData
 }
 
+/**
+ * The layout component for the admin section.
+ * It displays a breadcrumb navigation and renders the nested routes.
+ *
+ * @returns {JSX.Element} The admin layout component.
+ */
 export default function Admin(){
     const matches = useMatches() as UIMatch<unknown, MatchData>[];
     

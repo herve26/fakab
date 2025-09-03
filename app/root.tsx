@@ -12,6 +12,12 @@ import fontStyleSheetUrl from './styles/font.css'
 import tailwindStyleSheetUrl from './styles/tailwind.css'
 import Header from "./components/header.tsx";
 
+/**
+ * The links function for the root route.
+ * It returns an array of link descriptors for the document.
+ *
+ * @returns {LinkDescriptor[]} An array of link descriptors.
+ */
 export const links: LinksFunction = () => {
 	const linksdesc = [
 		// Preload CSS as a resource to avoid render blocking
@@ -32,6 +38,12 @@ export const links: LinksFunction = () => {
 }
 
 
+/**
+ * The root component for the application.
+ * It renders the basic HTML structure of the application.
+ *
+ * @returns {JSX.Element} The root component.
+ */
 export default function App() {
   return (
     <html lang="en">

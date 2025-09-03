@@ -15,6 +15,13 @@ const schema = z.object({
     materialUnit: z.string()
 })
 
+/**
+ * The action function for the new material route.
+ * It handles the form submission for creating a new material.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({request}: ActionFunctionArgs){
     const formData = await request.formData()
 
@@ -40,12 +47,24 @@ export async function action({request}: ActionFunctionArgs){
 
 }
 
+/**
+ * The loader function for the new material route.
+ * It fetches the list of material units to be used in the form.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
     const units = await supabaseClient.from("MaterialUnit").select()
     
     return json({units: units.data ?? []})
 }
 
+/**
+ * The component for adding a new material.
+ * It displays a form for creating a new material.
+ *
+ * @returns {JSX.Element} The new material component.
+ */
 export default function MaterialsNew(){
     const { units } = useLoaderData<typeof loader>()
 

@@ -4,12 +4,24 @@ import OrderCard from "#app/components/molecules/order-card.tsx";
 import ScreenView from "#app/components/screen-view.tsx";
 import { supabaseClient } from "#app/utils/supa.server.ts";
 
+/**
+ * The loader function for the orders route.
+ * It fetches the list of orders from the database.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
   const orders = await supabaseClient.from("order_summary").select()
 
   return json({orders: orders.data ?? []})
 }
 
+/**
+ * The component for the orders route.
+ * It displays a list of orders.
+ *
+ * @returns {JSX.Element} The orders component.
+ */
 function Orders() {
     const { orders } = useLoaderData<typeof loader>()
   const params = useParams()

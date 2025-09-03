@@ -27,12 +27,16 @@ const childrenSizeClassName = {
 } satisfies Record<Size, string>
 
 /**
- * Renders an SVG icon. The icon defaults to the size of the font. To make it
- * align vertically with neighboring text, you can pass the text as a child of
- * the icon and it will be automatically aligned.
- * Alternatively, if you're not ok with the icon being to the left of the text,
- * you need to wrap the icon and text in a common parent and set the parent to
- * display "flex" (or "inline-flex") with "items-center" and a reasonable gap.
+ * Renders an SVG icon.
+ * The icon defaults to the size of the font. To make it align vertically with neighboring text,
+ * you can pass the text as a child of the icon and it will be automatically aligned.
+ *
+ * @param {SVGProps<SVGSVGElement> & { name: IconName, size?: Size }} props - The props for the component.
+ * @param {IconName} props.name - The name of the icon to render.
+ * @param {Size} [props.size='font'] - The size of the icon.
+ * @param {string} [props.className] - The class name for the icon.
+ * @param {React.ReactNode} [props.children] - The text to display next to the icon.
+ * @returns {JSX.Element} The icon component.
  */
 export function Icon({
 	name,

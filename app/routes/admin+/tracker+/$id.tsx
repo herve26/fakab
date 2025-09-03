@@ -23,6 +23,13 @@ const schema = z.object({
   resource: z.string(),
 })
 
+/**
+ * The action function for the tracker ID route.
+ * It handles the upload of a document resource for a customer.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({params, request}: ActionFunctionArgs){
   const shortid = params.id
   if(!shortid) return json({message: "Id is required"}, {status: 404})
@@ -76,6 +83,13 @@ export async function action({params, request}: ActionFunctionArgs){
   }
 }
 
+/**
+ * The loader function for the tracker ID route.
+ * It fetches the details of a specific customer connection from the database.
+ *
+ * @param {LoaderFunctionArgs} args - The loader function arguments.
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader({params}: LoaderFunctionArgs) {
   const shortid = params.id
   invariantResponse(shortid, 'Must Provide a connection ID', {status: 404})
@@ -95,10 +109,19 @@ export async function loader({params}: LoaderFunctionArgs) {
   return json({customerConnection: {...data, id: getShortID(data.id)}, requiredImages: requiredCCImages, requiredMDUImages: requiredCCMDUImages, materials: materials ?? []});
 }
 
+/**
+ * The handle for the tracker ID route, which defines the breadcrumb.
+ */
 export const handle = {
 	breadcrumb: (match: UIMatch<typeof loader, unknown>) => ({route: `/admin/tracker/${match.data.customerConnection.id}`, text: match.data.customerConnection.id}),
 };
 
+/**
+ * The component for the tracker ID route.
+ * It displays the details of a specific customer connection.
+ *
+ * @returns {JSX.Element} The tracker ID component.
+ */
 export default function TrackerID(){
     const fetcher = useFetcher()
     const { customerConnection, requiredImages, requiredMDUImages, materials: materialsList } = useLoaderData<typeof loader>()

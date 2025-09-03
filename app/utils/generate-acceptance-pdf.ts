@@ -7,6 +7,18 @@ import { supabaseClient } from "./supa.server.ts";
 import fs from "node:fs/promises"
 
 
+/**
+ * Generates a PDF acceptance document for a customer.
+ * This function fetches a PDF template and customer data, then fills the PDF with the customer's information,
+ * including images and maps. It handles both standard and MDU (Multi-Dwelling Unit) customers.
+ *
+ * @param {object} params - The parameters for the function.
+ * @param {string} params.customerID - The ID of the customer connection.
+ * @param {string} params.templateID - The ID of the document template.
+ * @param {boolean} [params.mdu=false] - A flag indicating if the customer is an MDU.
+ * @returns {Promise<Uint8Array>} A promise that resolves with the generated PDF as a Uint8Array.
+ * @throws {InvariantResponse} If the connection, documents, or template are not found.
+ */
 export async function generateAcceptancePDF({customerID, templateID, mdu = false}: {customerID: string, templateID: string, mdu?: boolean} ){
 
     const { data: templateDoc } = await supabaseClient.from("document_template").select(`
@@ -148,6 +160,14 @@ export async function generateAcceptancePDF({customerID, templateID, mdu = false
     return await pdfDoc.save()
 }
 
+/**
+ * Fills a PDF text field with text, automatically adjusting the font size to fit the field's width.
+ *
+ * @param {PDFTextField} field - The PDF text field to fill.
+ * @param {PDFFont} font - The font to use for the text.
+ * @param {string} text - The text to write in the field.
+ * @param {number} initFontSize - The initial font size to try.
+ */
 async function fillFieldWithAdaptiveFontSize(field: PDFTextField, font: PDFFont, text: string, initFontSize: number) {
     const widgets = field.acroField.getWidgets();
   

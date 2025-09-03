@@ -6,6 +6,13 @@ type Detail = {
     unitPrice: number | null; 
 }
 
+/**
+ * A component that displays the details of a merchant order.
+ *
+ * @param {object} props - The props for the component.
+ * @param {Detail[]} props.details - The details of the order.
+ * @returns {JSX.Element} The merchant order detail component.
+ */
 export default function MerchantOrderDetail({details}: {details: Detail[]}){
     const detailsArr = details.map(det => [det.materialName, det.quantity, det.unitPrice ?? "-", (det.unitPrice ?? 0)  * det.quantity])
     return(

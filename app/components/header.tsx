@@ -1,5 +1,11 @@
 import { Link } from "@remix-run/react";
 
+/**
+ * The header component for the application.
+ * It displays the application title and navigation links.
+ *
+ * @returns {JSX.Element} The header component.
+ */
 const Header = () => {
   return (
     <header className="bg-gray-800 text-white px-4 py-2 flex justify-between items-center">

@@ -12,6 +12,13 @@ const schema = z.object({
     members: z.array(z.string())
 })
 
+/**
+ * The action function for the new team route.
+ * It handles the form submission for creating a new team.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({request}: ActionFunctionArgs){
     const formData = await request.formData()
     const submission = parse(formData, { schema })
@@ -38,6 +45,12 @@ export async function action({request}: ActionFunctionArgs){
     return json({error: "Unable to Create Team"})
 }
 
+/**
+ * The loader function for the new team route.
+ * It fetches the list of employees who can be team leaders.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
     const {data, error } = await supabaseClient.from("employee").select().filter("inchargeofid","is", null).filter("teamid", "is", null)
     
@@ -49,6 +62,12 @@ export async function loader(){
     return json({usersCharge: data})
 }
 
+/**
+ * The component for creating a new team.
+ * It displays a form for creating a new team.
+ *
+ * @returns {JSX.Element} The new team component.
+ */
 export default function TeamNew(){
     const {usersCharge} = useLoaderData<typeof loader>()
     return (
@@ -74,7 +93,14 @@ type Employee = {
     last_name: string
 }
 
-// React component which has a button to add a new Member
+/**
+ * A component for adding members to a team.
+ * It allows users to dynamically add new member entries.
+ *
+ * @param {object} props - The props for the component.
+ * @param {Employee[]} props.employees - The list of available employees.
+ * @returns {JSX.Element} The add member component.
+ */
 export function AddMember({employees}: {employees: Employee[]}){
     const [ members, setMembers ] = useState<(string | null)[]>([])
     const employeeArr = employees.filter(employee => !members.includes(`${employee.employeeid}`))

@@ -17,6 +17,13 @@ const schema = z.object({
 	material: z.array(materialSchema)
 })
 
+/**
+ * The action function for the tracker index route.
+ * It handles the form submission for updating a customer connection.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response | null>} A promise that resolves with a response or null.
+ */
 export async function action({request}: ActionFunctionArgs){
 	const formData = await request.formData()
 	const submission = parse(formData, { schema })
@@ -42,6 +49,13 @@ export async function action({request}: ActionFunctionArgs){
 	return null
 }
 
+/**
+ * The loader function for the tracker index route.
+ * It fetches the list of customer connections from the database.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ * @throws {Error} If there is an error fetching the data.
+ */
 export async function loader() {
 	const { data } = await supabaseClient.from("customer_connection").select()
 
@@ -50,6 +64,12 @@ export async function loader() {
 	return json({connections: data.map(conn => ({...conn, id: getShortID(conn.id)}))});
 }
 
+/**
+ * The component for the tracker index route.
+ * It displays a list of customer connections.
+ *
+ * @returns {JSX.Element} The customer connections list component.
+ */
 function CustomerConnectionsList() {
 	const { connections } = useLoaderData<typeof loader>();
 

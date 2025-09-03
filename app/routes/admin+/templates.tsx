@@ -17,6 +17,13 @@ const schema = z.object({
     templateId: z.number()
 })
 
+/**
+ * The action function for the templates route.
+ * It handles the form submission for adding a resource to a template.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({request}: ActionFunctionArgs){
     let path = ""
 
@@ -62,12 +69,24 @@ export async function action({request}: ActionFunctionArgs){
     }
 }
 
+/**
+ * The loader function for the templates route.
+ * It fetches the list of document templates from the database.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
     const { data } = await supabaseClient.from("document_template").select("*, document_resource(path)")
   
     return json({templates: data ?? []})
 }
 
+/**
+ * The component for the templates route.
+ * It displays a list of document templates.
+ *
+ * @returns {JSX.Element} The template index component.
+ */
 export default function TemplateIndex(){
     const { templates } = useLoaderData<typeof loader>()
     return (

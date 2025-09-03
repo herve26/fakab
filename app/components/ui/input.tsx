@@ -5,6 +5,14 @@ import { cn } from '#app/utils/misc.tsx'
 export interface InputProps
 	extends React.InputHTMLAttributes<HTMLInputElement> {}
 
+/**
+ * An input component.
+ *
+ * @param {InputProps} props - The props for the component.
+ * @param {string} [props.className] - The class name for the input.
+ * @param {string} [props.type] - The type of the input.
+ * @returns {JSX.Element} The input component.
+ */
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	({ className, type, ...props }, ref) => {
 		return (

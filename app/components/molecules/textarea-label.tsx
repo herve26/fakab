@@ -7,6 +7,15 @@ type Props = {
     required?: boolean;
 }
 
+/**
+ * A component that combines a label and a textarea.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {string} props.name - The name of the textarea.
+ * @param {string} props.label - The label for the textarea.
+ * @param {boolean} [props.required] - Whether the textarea is required.
+ * @returns {JSX.Element} The textarea label component.
+ */
 export default function TextareaLabel({name, label, required}: Props){
     const id = useId()
 

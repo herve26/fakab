@@ -15,6 +15,21 @@ type Props = {
     requiredImages: {id: string, label: string }[]
 }
 
+/**
+ * A component for uploading and managing required customer images.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {object[]} props.imagesToAdd - An array of image objects to be added.
+ * @param {string} props.imagesToAdd.id - The ID of the image to add.
+ * @param {string} props.imagesToAdd.label - The label of the image to add.
+ * @param {DocumentResource[]} props.uploadedImagesFile - An array of already uploaded image files.
+ * @param {boolean} [props.mdu] - A flag indicating if the customer is an MDU.
+ * @param {string} props.customerID - The ID of the customer.
+ * @param {object[]} props.requiredImages - An array of required image objects.
+ * @param {string} props.requiredImages.id - The ID of the required image.
+ * @param {string} props.requiredImages.label - The label of the required image.
+ * @returns {JSX.Element} The customer required images component.
+ */
 export default function CustomerRequiredImages({imagesToAdd, uploadedImagesFile, mdu, customerID}: Props){
   const id = useId()
   const [images, setImages] = useState<{image: string, fileIdx: number}[]>([])

@@ -12,6 +12,14 @@ type Props = {
     materials: Material[]
 }
 
+/**
+ * A component for adding materials used in a project.
+ * It allows users to dynamically add new material entries.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {Material[]} props.materials - The list of available materials.
+ * @returns {JSX.Element} The material add component.
+ */
 export default function MaterialAdd({materials}: Props){
     const [used, setUsed] = useState(0)
 

@@ -14,6 +14,13 @@ const schema = z.object({
     resource: z.string(),
   })
   
+/**
+ * The action function for the tracker maps route.
+ * It handles the upload of maps for a customer.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
   export async function action({params, request}: ActionFunctionArgs){
     const shortid = params.id
     if(!shortid) return json({message: "Id is required"}, {status: 404})

@@ -10,6 +10,17 @@ import  { type UploadHandler } from '@remix-run/node';
 //   makePublic?: boolean
 // }
 
+/**
+ * An upload handler that streams a file to Google Cloud Storage.
+ *
+ * @param {object} params - The parameters for the upload handler.
+ * @param {string} params.name - The name of the form field.
+ * @param {string} params.contentType - The content type of the file.
+ * @param {string} params.filename - The name of the file.
+ * @param {AsyncIterable<Uint8Array>} params.data - The file data as an async iterable.
+ * @returns {Promise<string>} A promise that resolves with the public URL of the uploaded file.
+ * @throws {Error} If the bucket name or filename is not provided.
+ */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const uploadStreamToCloudStorage: UploadHandler = async ({name,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

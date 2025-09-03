@@ -5,7 +5,14 @@ import { generateAcceptancePDF } from "#app/utils/generate-acceptance-pdf.ts";
 import { supabaseClient } from "#app/utils/supa.server.ts";
 import { getUUID } from "#app/utils/uuid.server.ts";
   
-
+/**
+ * The loader function for the PDF route.
+ * It generates a PDF acceptance document for a customer.
+ * If the customer has an MDU, it generates a zip file containing two PDFs.
+ *
+ * @param {LoaderFunctionArgs} args - The loader function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function loader({ params }: LoaderFunctionArgs){
     const shortid = params.id
     invariantResponse(shortid, "ID is required")

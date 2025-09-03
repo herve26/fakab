@@ -5,6 +5,12 @@ import ScreenView from "#app/components/screen-view.tsx";
 import Table from "#app/components/table.tsx";
 import { supabaseClient } from "#app/utils/supa.server.ts";
 
+/**
+ * The loader function for the materials route.
+ * It fetches the list of materials from the database.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
     const materials = await supabaseClient.from("material_inventory").select()
 
@@ -18,6 +24,12 @@ export async function loader(){
     return json({materials: matArr})
 }
 
+/**
+ * The component for the materials route.
+ * It displays a list of materials in a table.
+ *
+ * @returns {JSX.Element} The material index component.
+ */
 export default function MaterialIndex(){
     const { materials } = useLoaderData<typeof loader>()
 

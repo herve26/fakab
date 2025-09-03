@@ -10,6 +10,13 @@ export type CheckboxProps = Omit<
 	type?: string
 }
 
+/**
+ * A checkbox component based on Radix UI's Checkbox.
+ *
+ * @param {CheckboxProps} props - The props for the component.
+ * @param {string} [props.className] - The class name for the checkbox.
+ * @returns {JSX.Element} The checkbox component.
+ */
 const Checkbox = React.forwardRef<
 	React.ElementRef<typeof CheckboxPrimitive.Root>,
 	React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> & {

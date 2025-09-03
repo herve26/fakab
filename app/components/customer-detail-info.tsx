@@ -15,6 +15,14 @@ type Props = {
         teamid: number | null;
     }
 }
+
+/**
+ * A component that displays detailed information about a customer connection.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {Props['connection']} props.connection - The customer connection data.
+ * @returns {JSX.Element} The customer detail info component.
+ */
 export default function CustomerDetailInfo({connection}: Props){
     return (
         <div className="bg-white shadow mt-6 overflow-hidden sm:rounded-lg">

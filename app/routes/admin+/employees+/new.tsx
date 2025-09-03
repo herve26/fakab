@@ -15,6 +15,13 @@ const schema = z.object({
     start_date: z.date().transform(date=> date.toISOString())
 })
 
+/**
+ * The action function for the new employee route.
+ * It handles the form submission for creating a new employee.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response | null>} A promise that resolves with a response or null.
+ */
 export const action = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
 
@@ -38,6 +45,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 };
 
+/**
+ * The loader function for the new employee route.
+ * It fetches the list of teams to be used in the form.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ * @throws {Error} If there is an error fetching the data.
+ */
 export async function loader() {
     try{
         const { data, error } = await supabaseClient.from("team").select()
@@ -56,6 +70,12 @@ export async function loader() {
     
 }
 
+/**
+ * The component for adding a new employee.
+ * It displays a form for creating a new employee.
+ *
+ * @returns {JSX.Element} The add employee component.
+ */
 export default function AddEmployee() {
     const { teams } = useLoaderData<typeof loader>()
 

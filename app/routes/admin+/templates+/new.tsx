@@ -10,6 +10,13 @@ const schema = z.object({
   document_code: z.string()
 })
 
+/**
+ * The action function for the new template route.
+ * It handles the form submission for creating a new document template.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({ request }: ActionFunctionArgs) {
   
   const parsedData = parse(await request.formData(), { schema });
@@ -37,6 +44,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
 
 
+/**
+ * The component for creating a new document template.
+ * It displays a form for creating a new document template.
+ *
+ * @returns {JSX.Element} The create document template form component.
+ */
 export default function CreateDocumentTemplateForm() {
     return (
       <div className='p-4  w-[36vw] bg-white shadow-sm rounded-lg'>

@@ -1,5 +1,9 @@
 import type { MetaFunction } from "@remix-run/node";
 
+/**
+ * The meta function for the index route.
+ * @returns {Array<object>} An array of meta objects.
+ */
 export const meta: MetaFunction = () => {
   return [
     { title: "New Remix App" },
@@ -7,6 +11,10 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+/**
+ * The index route component.
+ * @returns {JSX.Element} The index route component.
+ */
 export default function Index() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>

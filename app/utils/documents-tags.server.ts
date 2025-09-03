@@ -1,3 +1,13 @@
+/**
+ * @typedef {object} ImageTag
+ * @property {string} id - The unique identifier for the image tag.
+ * @property {string} label - The human-readable label for the image tag.
+ */
+
+/**
+ * An array of required image tags for a standard customer installation.
+ * @type {ImageTag[]}
+ */
 export const requiredCCImages = [
     {id: "router_signal", label: "Router Signal"},
     {id: "router_back", label: "Router Back"},
@@ -10,6 +20,10 @@ export const requiredCCImages = [
     {id: "signal_origin", label: "Debut Signal(MDU/JB)"}
   ]
   
+  /**
+ * An array of required image tags for a Multi-Dwelling Unit (MDU) installation.
+ * @type {ImageTag[]}
+ */
   export const requiredCCMDUImages = [
     {id: "lovage_mdu", label: "Lovage MDU"},
     {id: "origin_mdu", label: "Poteau(MDU)"},

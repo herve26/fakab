@@ -1,7 +1,6 @@
 /**
- * By default, Remix will handle generating the HTTP Response for you.
- * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
- * For more information, see https://remix.run/file-conventions/entry.server
+ * @file This is the entry point for the server-side application.
+ * It handles the server-side rendering of the React application.
  */
 
 import { PassThrough } from "node:stream";
@@ -18,6 +17,16 @@ const ABORT_DELAY = 5_000;
 init()
 global.ENV = getEnv()
 
+/**
+ * Handles the request by either handling it as a bot request or a browser request.
+ *
+ * @param {Request} request - The request object.
+ * @param {number} responseStatusCode - The response status code.
+ * @param {Headers} responseHeaders - The response headers.
+ * @param {EntryContext} remixContext - The Remix entry context.
+ * @param {AppLoadContext} loadContext - The Remix app load context.
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export default function handleRequest(
   request: Request,
   responseStatusCode: number,
@@ -43,6 +52,15 @@ export default function handleRequest(
       );
 }
 
+/**
+ * Handles a request from a bot.
+ *
+ * @param {Request} request - The request object.
+ * @param {number} responseStatusCode - The response status code.
+ * @param {Headers} responseHeaders - The response headers.
+ * @param {EntryContext} remixContext - The Remix entry context.
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 function handleBotRequest(
   request: Request,
   responseStatusCode: number,
@@ -93,6 +111,15 @@ function handleBotRequest(
   });
 }
 
+/**
+ * Handles a request from a browser.
+ *
+ * @param {Request} request - The request object.
+ * @param {number} responseStatusCode - The response status code.
+ * @param {Headers} responseHeaders - The response headers.
+ * @param {EntryContext} remixContext - The Remix entry context.
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 function handleBrowserRequest(
   request: Request,
   responseStatusCode: number,

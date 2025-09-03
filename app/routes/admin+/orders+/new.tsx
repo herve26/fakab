@@ -19,6 +19,13 @@ const schema = z.object({
 	material: z.array(materialSchema)
 })
 
+/**
+ * The action function for the new order route.
+ * It handles the form submission for creating a new order.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response | null>} A promise that resolves with a response or null.
+ */
 export async function action({request}: ActionFunctionArgs){
     const formData = await request.formData()
 	const submission = parse(formData, { schema })
@@ -41,6 +48,12 @@ export async function action({request}: ActionFunctionArgs){
     return redirect(`/orders`)
 }
 
+/**
+ * The loader function for the new order route.
+ * It fetches the list of materials and suppliers to be used in the form.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
   const materials = await supabaseClient.from("material").select()
   const suppliers = await supabaseClient.from("supplier").select()
@@ -48,6 +61,12 @@ export async function loader(){
   return json({materials: materials.data ?? [], suppliers: suppliers.data ?? []})
 }
 
+/**
+ * The component for adding a new order.
+ * It displays a form for creating a new order.
+ *
+ * @returns {JSX.Element} The add order form component.
+ */
 const AddOrderForm = () => {
   const { materials, suppliers } = useLoaderData<typeof loader>()
 

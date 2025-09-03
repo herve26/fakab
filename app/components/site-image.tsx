@@ -12,6 +12,21 @@ type Props = {
     error?: boolean
 }
 
+/**
+ * A component that displays a site image with a dropdown for tagging.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {string} props.src - The source URL of the image.
+ * @param {object[]} props.options - The options for the tag dropdown.
+ * @param {string} props.options.id - The ID of the option.
+ * @param {string} props.options.label - The label of the option.
+ * @param {string} [props.className] - The class name for the component container.
+ * @param {string | undefined} props.value - The current value of the tag dropdown.
+ * @param {(value: string) => void} props.onChange - The function to call when the tag is changed.
+ * @param {() => void} props.handleRemove - The function to call when the image is removed.
+ * @param {boolean} [props.error=false] - Whether there is an error with the component.
+ * @returns {JSX.Element} The site image component.
+ */
 export default function SiteImage({src, options, className, onChange, value, error=false, handleRemove}: Props){
     function handleChange(event: ChangeEvent<HTMLSelectElement>){
         onChange(event.target.value)

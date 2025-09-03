@@ -7,6 +7,15 @@ type ResourceUploadProp = {
     tag: string,
 }
 
+/**
+ * A component for uploading a single resource file.
+ *
+ * @param {object} props - The props for the component.
+ * @param {ResourceUploadProp} props.doc - The document resource to upload.
+ * @param {string} props.customerID - The ID of the customer.
+ * @param {string} props.title - The title of the upload component.
+ * @returns {JSX.Element} The resource upload component.
+ */
 export function ResourceUpload({doc, title}: {doc: ResourceUploadProp, customerID: string, title: string}){
     const fetcher = useFetcher()
 
@@ -56,6 +65,15 @@ type Props = {
     mdu?: boolean;
 }
 
+/**
+ * A component for uploading customer maps.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {ResourceUploadProp[]} props.maps - An array of map resources to upload.
+ * @param {boolean} [props.mdu=false] - A flag indicating if the customer is an MDU.
+ * @param {string} props.customerID - The ID of the customer.
+ * @returns {JSX.Element} The customer maps upload component.
+ */
 export default function CustomerMapsUpload({maps, mdu=false, customerID}: Props){
 
     const fetcher = useFetcher()

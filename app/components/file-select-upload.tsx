@@ -9,6 +9,17 @@ type Props = {
   onSubmit: (files: File[]) => void
 }
 
+/**
+ * A component for selecting and uploading files.
+ * It supports drag and drop and file input selection.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {boolean} [props.single] - Whether to allow only a single file to be selected.
+ * @param {boolean} [props.submitting] - Whether the form is currently submitting.
+ * @param {string} props.title - The title of the upload component.
+ * @param {(files: File[]) => void} props.onSubmit - The function to call when the files are submitted.
+ * @returns {JSX.Element} The file select upload component.
+ */
 function FileSelectUpload({ single, title, submitting, onSubmit }: Props) {
   const [files, setFiles] = useState<File[]>([]);
   const [images, setImages] = useState<string[]>([]);

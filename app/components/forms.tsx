@@ -8,6 +8,14 @@ import { CheckedState } from '@radix-ui/react-checkbox'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 
+/**
+ * A component that displays a list of errors.
+ *
+ * @param {object} props - The props for the component.
+ * @param {ListOfErrors} [props.errors] - The list of errors to display.
+ * @param {string} [props.id] - The ID of the error list.
+ * @returns {JSX.Element | null} The error list component, or null if there are no errors.
+ */
 export function ErrorList({
 	id,
 	errors,
@@ -28,6 +36,16 @@ export function ErrorList({
 	)
 }
 
+/**
+ * A form field component that includes a label, an input, and an error list.
+ *
+ * @param {object} props - The props for the component.
+ * @param {React.LabelHTMLAttributes<HTMLLabelElement>} props.labelProps - The props for the label element.
+ * @param {React.InputHTMLAttributes<HTMLInputElement>} props.inputProps - The props for the input element.
+ * @param {ListOfErrors} [props.errors] - The list of errors for the field.
+ * @param {string} [props.className] - The class name for the field container.
+ * @returns {JSX.Element} The field component.
+ */
 export function Field({
 	labelProps,
 	inputProps,
@@ -58,6 +76,16 @@ export function Field({
 	)
 }
 
+/**
+ * A form field component for textareas, including a label, a textarea, and an error list.
+ *
+ * @param {object} props - The props for the component.
+ * @param {React.LabelHTMLAttributes<HTMLLabelElement>} props.labelProps - The props for the label element.
+ * @param {React.TextareaHTMLAttributes<HTMLTextAreaElement>} props.textareaProps - The props for the textarea element.
+ * @param {ListOfErrors} [props.errors] - The list of errors for the field.
+ * @param {string} [props.className] - The class name for the field container.
+ * @returns {JSX.Element} The textarea field component.
+ */
 export function TextareaField({
 	labelProps,
 	textareaProps,
@@ -88,6 +116,16 @@ export function TextareaField({
 	)
 }
 
+/**
+ * A form field component for checkboxes, including a label, a checkbox, and an error list.
+ *
+ * @param {object} props - The props for the component.
+ * @param {JSX.IntrinsicElements['label']} props.labelProps - The props for the label element.
+ * @param {CheckboxProps} props.buttonProps - The props for the checkbox component.
+ * @param {ListOfErrors} [props.errors] - The list of errors for the field.
+ * @param {string} [props.className] - The class name for the field container.
+ * @returns {JSX.Element} The checkbox field component.
+ */
 export function CheckboxField({
 	labelProps,
 	buttonProps,

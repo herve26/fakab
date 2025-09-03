@@ -11,6 +11,18 @@ type Props = {
     selected: boolean;
 }
 
+/**
+ * A card component that displays summary information about an order.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {number | null} props.orderId - The ID of the order.
+ * @param {string | null} props.orderDate - The date of the order.
+ * @param {string | null} props.status - The status of the order.
+ * @param {string | null} [props.supplier] - The supplier of the order.
+ * @param {number | null} props.items - The number of items in the order.
+ * @param {boolean} props.selected - Whether the card is selected.
+ * @returns {JSX.Element} The order card component.
+ */
 const OrderCard = ({ orderId, orderDate, status, supplier, items, selected }: Props) => {
     const statusStyle: Record<string, string> = {'PENDING': "bg-slate-500", "FULFILLED": "bg-green-400", "CANCELLED": "bg-red-500"}
     return (

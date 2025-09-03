@@ -4,6 +4,13 @@ import { supabaseClient } from "#app/utils/supa.server.ts";
 import { invariantResponse } from "@epic-web/invariant";
 import { getUUID } from "#app/utils/uuid.server.ts";
 
+/**
+ * The action function for the details map route.
+ * It handles the upload of a details map for a customer.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({params, request}: ActionFunctionArgs){
     const shortid = params.id
     if(!shortid){

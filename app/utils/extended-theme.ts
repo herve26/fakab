@@ -1,5 +1,13 @@
 import { type Config } from 'tailwindcss'
 
+/**
+ * An extended Tailwind CSS theme configuration.
+ * This object is used to customize and extend the default Tailwind CSS theme.
+ * It includes custom colors, border radiuses, font sizes, and animations.
+ *
+ * @see https://tailwindcss.com/docs/theme
+ * @type {Config['theme']}
+ */
 export const extendedTheme = {
 	colors: {
 		border: 'hsl(var(--border))',

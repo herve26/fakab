@@ -4,6 +4,14 @@ import MerchantOrderDetail from "#app/components/molecules/merchant-order-detail
 import RefillOrderDetail from "#app/components/molecules/refill-order-detail.tsx"
 import { supabaseClient } from "#app/utils/supa.server.ts"
 
+/**
+ * The loader function for the order detail route.
+ * It fetches the details of a specific order from the database.
+ *
+ * @param {LoaderFunctionArgs} args - The loader function arguments.
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ * @throws {Error} If the order ID is not provided or if there is an error fetching the data.
+ */
 export async function loader({params}: LoaderFunctionArgs){
     const id = params.id
 
@@ -32,6 +40,12 @@ export async function loader({params}: LoaderFunctionArgs){
     }
 }
 
+/**
+ * The component for the order detail route.
+ * It displays the details of a specific order.
+ *
+ * @returns {JSX.Element} The order detail component.
+ */
 export default function OrderDetail(){
     const { order } = useLoaderData<typeof loader>()
     return (

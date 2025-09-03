@@ -2,6 +2,13 @@
 import { supabaseClient } from "#app/utils/supa.server.ts";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 
+/**
+ * The loader function for the healthcheck route.
+ * It checks the health of the application by connecting to the database and making a request to itself.
+ *
+ * @param {LoaderFunctionArgs} args - The loader function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const host =
     request.headers.get("X-Forwarded-Host") ?? request.headers.get("host");

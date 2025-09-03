@@ -10,6 +10,17 @@ import {
 	TooltipTrigger,
 } from './tooltip.tsx'
 
+/**
+ * A button that displays a status icon and an optional message in a tooltip.
+ *
+ * @param {object} props - The props for the component.
+ * @param {'pending' | 'success' | 'error' | 'idle'} props.status - The status of the button.
+ * @param {string | null} [props.message] - The message to display in the tooltip.
+ * @param {Parameters<typeof useSpinDelay>[1]} [props.spinDelay] - The delay for the spinner.
+ * @param {string} [props.className] - The class name for the button.
+ * @param {React.ReactNode} props.children - The content of the button.
+ * @returns {JSX.Element} The status button component.
+ */
 export const StatusButton = React.forwardRef<
 	HTMLButtonElement,
 	ButtonProps & {

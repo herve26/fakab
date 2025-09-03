@@ -4,6 +4,12 @@ import { useSpinDelay } from 'spin-delay'
 import { cn } from '#app/utils/misc.tsx'
 import { Icon } from './ui/icon.tsx'
 
+/**
+ * A progress bar component that indicates page loading and transitions.
+ * It uses `useNavigation` from Remix to track the transition state.
+ *
+ * @returns {JSX.Element} The progress bar component.
+ */
 function EpicProgress() {
 	const transition = useNavigation()
 	const busy = transition.state !== 'idle'

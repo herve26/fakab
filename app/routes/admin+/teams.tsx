@@ -3,6 +3,12 @@ import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import Table from "#app/components/table.tsx";
 import { supabaseClient } from "#app/utils/supa.server.ts";
 
+/**
+ * The loader function for the teams route.
+ * It fetches the list of teams from the database.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
     const { data } = await supabaseClient.from("team_summary").select()
     
@@ -18,6 +24,12 @@ export async function loader(){
     return json({teams: teamArr})
 }
 
+/**
+ * The component for the teams route.
+ * It displays a list of teams in a table.
+ *
+ * @returns {JSX.Element} The team index component.
+ */
 export default function TeamIndex(){
     const { teams } = useLoaderData<typeof loader>()
 

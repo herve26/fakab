@@ -5,14 +5,29 @@ import { useSpinDelay } from 'spin-delay'
 import { extendTailwindMerge } from 'tailwind-merge'
 import { extendedTheme } from './extended-theme.ts'
 
+/**
+ * Returns the source URL for a user's image.
+ * @param {string | null | undefined} imageId - The ID of the user's image.
+ * @returns {string} The source URL for the user's image, or a default image if no ID is provided.
+ */
 export function getUserImgSrc(imageId?: string | null) {
 	return imageId ? `/resources/user-images/${imageId}` : '/img/user.png'
 }
 
+/**
+ * Returns the source URL for a note's image.
+ * @param {string} imageId - The ID of the note's image.
+ * @returns {string} The source URL for the note's image.
+ */
 export function getNoteImgSrc(imageId: string) {
 	return `/resources/note-images/${imageId}`
 }
 
+/**
+ * Extracts the error message from an unknown error type.
+ * @param {unknown} error - The error to extract the message from.
+ * @returns {string} The error message.
+ */
 export function getErrorMessage(error: unknown) {
 	if (typeof error === 'string') return error
 	if (
@@ -27,6 +42,10 @@ export function getErrorMessage(error: unknown) {
 	return 'Unknown Error'
 }
 
+/**
+ * Formats the colors from the extended theme into a structure that can be used by tailwind-merge.
+ * @returns {Array<string | object>} An array of color names and color groups.
+ */
 function formatColors() {
 	const colors = []
 	for (const [key, color] of Object.entries(extendedTheme.colors)) {
@@ -63,10 +82,22 @@ const customTwMerge = extendTailwindMerge<string, string>({
 	},
 })
 
+/**
+ * A utility function to merge Tailwind CSS classes.
+ * It uses `clsx` to conditionally apply classes and `tailwind-merge` to resolve conflicts.
+ *
+ * @param {...ClassValue[]} inputs - The class values to merge.
+ * @returns {string} The merged class string.
+ */
 export function cn(...inputs: ClassValue[]) {
 	return customTwMerge(clsx(inputs))
 }
 
+/**
+ * Returns the domain URL from a Request object.
+ * @param {Request} request - The request object.
+ * @returns {string} The domain URL.
+ */
 export function getDomainUrl(request: Request) {
 	const host =
 		request.headers.get('X-Forwarded-Host') ??
@@ -76,6 +107,13 @@ export function getDomainUrl(request: Request) {
 	return `${protocol}://${host}`
 }
 
+/**
+ * Returns the referrer route from a Request object.
+ * It handles inconsistencies in the 'referer' header.
+ *
+ * @param {Request} request - The request object.
+ * @returns {string} The referrer route.
+ */
 export function getReferrerRoute(request: Request) {
 	// spelling errors and whatever makes this annoyingly inconsistent
 	// in my own testing, `referer` returned the right value, but 🤷‍♂️
@@ -92,7 +130,11 @@ export function getReferrerRoute(request: Request) {
 }
 
 /**
- * Merge multiple headers objects into one (uses set so headers are overridden)
+ * Merges multiple headers objects into one.
+ * It uses `set` to override headers with the same name.
+ *
+ * @param {...(ResponseInit['headers'] | null | undefined)} headers - The headers objects to merge.
+ * @returns {Headers} The merged headers object.
  */
 export function mergeHeaders(
 	...headers: Array<ResponseInit['headers'] | null | undefined>
@@ -108,7 +150,11 @@ export function mergeHeaders(
 }
 
 /**
- * Combine multiple header objects into one (uses append so headers are not overridden)
+ * Combines multiple header objects into one.
+ * It uses `append` so headers with the same name are not overridden.
+ *
+ * @param {...(ResponseInit['headers'] | null | undefined)} headers - The headers objects to combine.
+ * @returns {Headers} The combined headers object.
  */
 export function combineHeaders(
 	...headers: Array<ResponseInit['headers'] | null | undefined>
@@ -124,7 +170,11 @@ export function combineHeaders(
 }
 
 /**
- * Combine multiple response init objects into one (uses combineHeaders)
+ * Combines multiple response init objects into one.
+ * It uses `combineHeaders` to combine the headers.
+ *
+ * @param {...(ResponseInit | null | undefined)} responseInits - The response init objects to combine.
+ * @returns {ResponseInit} The combined response init object.
  */
 export function combineResponseInits(
 	...responseInits: Array<ResponseInit | null | undefined>
@@ -140,14 +190,13 @@ export function combineResponseInits(
 }
 
 /**
- * Returns true if the current navigation is submitting the current route's
- * form. Defaults to the current route's form action and method POST.
+ * A hook that returns true if the current navigation is submitting the current route's form.
  *
- * Defaults state to 'non-idle'
- *
- * NOTE: the default formAction will include query params, but the
- * navigation.formAction will not, so don't use the default formAction if you
- * want to know if a form is submitting without specific query params.
+ * @param {object} [options] - The options for the hook.
+ * @param {string} [options.formAction] - The action of the form to check. Defaults to the current route's form action.
+ * @param {'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE'} [options.formMethod='POST'] - The method of the form to check.
+ * @param {'submitting' | 'loading' | 'non-idle'} [options.state='non-idle'] - The navigation state to check for.
+ * @returns {boolean} True if the form is pending, false otherwise.
  */
 export function useIsPending({
 	formAction,
@@ -172,12 +221,15 @@ export function useIsPending({
 }
 
 /**
- * This combines useSpinDelay (from https://npm.im/spin-delay) and useIsPending
- * from our own utilities to give you a nice way to show a loading spinner for
- * a minimum amount of time, even if the request finishes right after the delay.
+ * A hook that combines `useIsPending` and `useSpinDelay` to show a loading spinner for a minimum amount of time.
+ * This avoids a flash of loading state regardless of how fast or slow the request is.
  *
- * This avoids a flash of loading state regardless of how fast or slow the
- * request is.
+ * @param {object} [options] - The options for the hook.
+ * @param {string} [options.formAction] - The action of the form to check. Defaults to the current route's form action.
+ * @param {'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE'} [options.formMethod] - The method of the form to check.
+ * @param {number} [options.delay=400] - The delay in milliseconds before showing the spinner.
+ * @param {number} [options.minDuration=300] - The minimum duration in milliseconds to show the spinner.
+ * @returns {boolean} True if the form is pending and the delay has passed, false otherwise.
  */
 export function useDelayedIsPending({
 	formAction,
@@ -194,6 +246,13 @@ export function useDelayedIsPending({
 	return delayedIsPending
 }
 
+/**
+ * Calls all functions passed as arguments with the same arguments.
+ *
+ * @param {...((...args: Args) => unknown) | undefined} fns - The functions to call.
+ * @returns {(...args: Args) => void} A function that calls all the passed functions.
+ * @template Args - The arguments of the functions.
+ */
 function callAll<Args extends Array<unknown>>(
 	...fns: Array<((...args: Args) => unknown) | undefined>
 ) {
@@ -201,10 +260,14 @@ function callAll<Args extends Array<unknown>>(
 }
 
 /**
- * Use this hook with a button and it will make it so the first click sets a
- * `doubleCheck` state to true, and the second click will actually trigger the
- * `onClick` handler. This allows you to have a button that can be like a
- * "are you sure?" experience for the user before doing destructive operations.
+ * A hook that provides a double-check functionality for buttons.
+ * The first click sets a `doubleCheck` state to true, and the second click triggers the `onClick` handler.
+ * This is useful for creating "are you sure?" experiences for destructive operations.
+ *
+ * @returns {{
+ *   doubleCheck: boolean,
+ *   getButtonProps: (props?: React.ButtonHTMLAttributes<HTMLButtonElement>) => object
+ * }} An object containing the `doubleCheck` state and a `getButtonProps` function.
  */
 export function useDoubleCheck() {
 	const [doubleCheck, setDoubleCheck] = useState(false)
@@ -242,7 +305,12 @@ export function useDoubleCheck() {
 }
 
 /**
- * Simple debounce implementation
+ * A simple debounce implementation.
+ *
+ * @param {Callback} fn - The function to debounce.
+ * @param {number} delay - The debounce delay in milliseconds.
+ * @returns {(...args: Parameters<Callback>) => void} The debounced function.
+ * @template Callback - The type of the function to debounce.
  */
 function debounce<Callback extends (...args: Parameters<Callback>) => void>(
 	fn: Callback,
@@ -258,7 +326,12 @@ function debounce<Callback extends (...args: Parameters<Callback>) => void>(
 }
 
 /**
- * Debounce a callback function
+ * A hook that debounces a callback function.
+ *
+ * @param {Callback} callback - The callback function to debounce.
+ * @param {number} delay - The debounce delay in milliseconds.
+ * @returns {(...args: Parameters<Callback>) => void} The debounced callback function.
+ * @template Callback - The type of the callback function to debounce.
  */
 export function useDebounce<
 	Callback extends (...args: Parameters<Callback>) => ReturnType<Callback>,
@@ -277,6 +350,15 @@ export function useDebounce<
 	)
 }
 
+/**
+ * Downloads a file from a URL.
+ * It will retry up to 3 times if the fetch fails.
+ *
+ * @param {string} url - The URL of the file to download.
+ * @param {number} [retries=0] - The number of retries attempted.
+ * @returns {Promise<{content_type: string, blob: Buffer}>} A promise that resolves with the content type and a Buffer of the file.
+ * @throws {Error} If the fetch fails after the maximum number of retries.
+ */
 export async function downloadFile(url: string, retries: number = 0) {
 	const MAX_RETRIES = 3
 	try {

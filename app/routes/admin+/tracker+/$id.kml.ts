@@ -4,6 +4,14 @@ import { getUUID } from "#app/utils/uuid.server.ts";
 import { invariantResponse } from "@epic-web/invariant";
 import { LoaderFunctionArgs } from "@remix-run/node";
 
+/**
+ * The loader function for the KML route.
+ * It generates a KML file for a customer's path.
+ *
+ * @param {LoaderFunctionArgs} args - The loader function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ * @throws {Error} If the ID is not provided.
+ */
 export async function loader({params}: LoaderFunctionArgs){
     const shortid = params.id
     if(!shortid) {

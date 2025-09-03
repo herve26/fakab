@@ -4,6 +4,12 @@ import ScreenView from '#app/components/screen-view.tsx';
 import Table from '#app/components/table.tsx';
 import { supabaseClient } from '#app/utils/supa.server.ts';
 
+/**
+ * The loader function for the employees route.
+ * It fetches the list of employees from the database.
+ *
+ * @returns {Promise<Response>} A promise that resolves with the response.
+ */
 export async function loader(){
     const { data, error } = await supabaseClient.from("employee").select('first_name, last_name, team!employee_teamid_fkey ( name ) ')
 
@@ -17,6 +23,12 @@ export async function loader(){
     return json({employees: employeesArr})
 }
 
+/**
+ * The component for the employees route.
+ * It displays a list of employees in a table.
+ *
+ * @returns {JSX.Element} The employee list component.
+ */
 function EmployeeList() {
     const { employees } = useLoaderData<typeof loader>()
 

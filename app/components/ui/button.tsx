@@ -4,6 +4,10 @@ import * as React from 'react'
 
 import { cn } from '#app/utils/misc.tsx'
 
+/**
+ * The variants for the button component.
+ * @type {ReturnType<typeof cva>}
+ */
 const buttonVariants = cva(
 	'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors outline-none focus-visible:ring-4 focus-within:ring-4 ring-ring ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
 	{
@@ -41,6 +45,16 @@ export interface ButtonProps
 	asChild?: boolean
 }
 
+/**
+ * A button component with different variants and sizes.
+ *
+ * @param {ButtonProps} props - The props for the component.
+ * @param {string} [props.className] - The class name for the button.
+ * @param {'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'} [props.variant] - The variant of the button.
+ * @param {'default' | 'wide' | 'sm' | 'lg' | 'pill' | 'icon'} [props.size] - The size of the button.
+ * @param {boolean} [props.asChild=false] - Whether the button should be rendered as a child component.
+ * @returns {JSX.Element} The button component.
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 	({ className, variant, size, asChild = false, ...props }, ref) => {
 		const Comp = asChild ? Slot : 'button'

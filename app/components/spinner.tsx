@@ -1,3 +1,8 @@
+/**
+ * A spinner component for indicating loading states.
+ *
+ * @returns {JSX.Element} The spinner component.
+ */
 export default function Spinner(){
     return (
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

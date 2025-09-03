@@ -9,6 +9,16 @@ type Props = {
     className?: string
 }
 
+/**
+ * A component that provides a standard screen layout with a heading and a link.
+ *
+ * @param {Props} props - The props for the component.
+ * @param {string} props.heading - The heading to display on the screen.
+ * @param {string} props.link - The URL for the link.
+ * @param {ReactNode} props.children - The content of the screen.
+ * @param {string} [props.className] - The class name for the screen container.
+ * @returns {JSX.Element} The screen view component.
+ */
 export default function ScreenView({heading, link, children, className}: Props){
     return (
         <div className={cn("grow", className)}>

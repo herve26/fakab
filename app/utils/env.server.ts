@@ -1,3 +1,9 @@
+/**
+ * @file This file is responsible for validating and exposing environment variables to the application.
+ * It uses Zod to define a schema for the environment variables and validates them on server startup.
+ * It also exposes a subset of environment variables to the client-side.
+ */
+
 import { z } from 'zod'
 
 const schema = z.object({
@@ -15,6 +21,12 @@ declare global {
 	}
 }
 
+/**
+ * Initializes and validates the environment variables on the server.
+ * This function should be called at the start of the application to ensure
+ * that all required environment variables are present and valid.
+ * @throws {Error} If the environment variables are invalid.
+ */
 export function init() {
 	const parsed = schema.safeParse(process.env)
 
@@ -29,13 +41,13 @@ export function init() {
 }
 
 /**
- * This is used in both `entry.server.ts` and `root.tsx` to ensure that
- * the environment variables are set and globally available before the app is
- * started.
+ * Returns a subset of environment variables that are safe to be exposed to the client.
+ * This function is used in both `entry.server.ts` and `root.tsx` to ensure that
+ * the environment variables are set and globally available before the app is started.
  *
  * NOTE: Do *not* add any environment variables in here that you do not wish to
  * be included in the client.
- * @returns all public ENV variables
+ * @returns {object} An object containing the public environment variables.
  */
 export function getEnv() {
 	return {

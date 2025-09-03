@@ -15,6 +15,15 @@ const DropdownMenuSub = DropdownMenuPrimitive.Sub
 
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
+/**
+ * A sub-trigger for a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the sub-trigger.
+ * @param {boolean} [props.inset] - Whether the sub-trigger is inset.
+ * @param {React.ReactNode} props.children - The content of the sub-trigger.
+ * @returns {JSX.Element} The dropdown menu sub-trigger component.
+ */
 const DropdownMenuSubTrigger = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
@@ -38,6 +47,13 @@ const DropdownMenuSubTrigger = React.forwardRef<
 DropdownMenuSubTrigger.displayName =
 	DropdownMenuPrimitive.SubTrigger.displayName
 
+/**
+ * A sub-content for a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the sub-content.
+ * @returns {JSX.Element} The dropdown menu sub-content component.
+ */
 const DropdownMenuSubContent = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent> & {
@@ -56,6 +72,14 @@ const DropdownMenuSubContent = React.forwardRef<
 DropdownMenuSubContent.displayName =
 	DropdownMenuPrimitive.SubContent.displayName
 
+/**
+ * The content of a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the content.
+ * @param {number} [props.sideOffset=4] - The offset of the content from the trigger.
+ * @returns {JSX.Element} The dropdown menu content component.
+ */
 const DropdownMenuContent = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.Content>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> & {
@@ -76,6 +100,14 @@ const DropdownMenuContent = React.forwardRef<
 ))
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
+/**
+ * An item in a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the item.
+ * @param {boolean} [props.inset] - Whether the item is inset.
+ * @returns {JSX.Element} The dropdown menu item component.
+ */
 const DropdownMenuItem = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.Item>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
@@ -95,6 +127,15 @@ const DropdownMenuItem = React.forwardRef<
 ))
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
 
+/**
+ * A checkbox item in a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the checkbox item.
+ * @param {boolean} props.checked - Whether the checkbox item is checked.
+ * @param {React.ReactNode} props.children - The content of the checkbox item.
+ * @returns {JSX.Element} The dropdown menu checkbox item component.
+ */
 const DropdownMenuCheckboxItem = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem> & {
@@ -130,6 +171,14 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 DropdownMenuCheckboxItem.displayName =
 	DropdownMenuPrimitive.CheckboxItem.displayName
 
+/**
+ * A radio item in a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the radio item.
+ * @param {React.ReactNode} props.children - The content of the radio item.
+ * @returns {JSX.Element} The dropdown menu radio item component.
+ */
 const DropdownMenuRadioItem = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> & {
@@ -154,6 +203,14 @@ const DropdownMenuRadioItem = React.forwardRef<
 ))
 DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
 
+/**
+ * A label in a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the label.
+ * @param {boolean} [props.inset] - Whether the label is inset.
+ * @returns {JSX.Element} The dropdown menu label component.
+ */
 const DropdownMenuLabel = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.Label>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
@@ -173,6 +230,13 @@ const DropdownMenuLabel = React.forwardRef<
 ))
 DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName
 
+/**
+ * A separator in a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the separator.
+ * @returns {JSX.Element} The dropdown menu separator component.
+ */
 const DropdownMenuSeparator = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator> & {
@@ -187,6 +251,13 @@ const DropdownMenuSeparator = React.forwardRef<
 ))
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
+/**
+ * A shortcut in a dropdown menu, based on Radix UI's DropdownMenu.
+ *
+ * @param {object} props - The props for the component.
+ * @param {string} [props.className] - The class name for the shortcut.
+ * @returns {JSX.Element} The dropdown menu shortcut component.
+ */
 const DropdownMenuShortcut = ({
 	className,
 	...props

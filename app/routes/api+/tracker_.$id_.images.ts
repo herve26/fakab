@@ -14,6 +14,13 @@ const schema = z.object({
     resources: z.string().array(),
   })
 
+/**
+ * The action function for the tracker images route.
+ * It handles the upload of images for a customer.
+ *
+ * @param {ActionFunctionArgs} args - The action function arguments.
+ * @returns {Promise<Response>} A promise that resolves with a response.
+ */
 export async function action({request, params}: ActionFunctionArgs){
 const shortid = params.id
 console.log(shortid)

@@ -6,6 +6,15 @@ import { Input } from './ui/input.tsx'
 import { Label } from './ui/label.tsx'
 import { StatusButton } from './ui/status-button.tsx'
 
+/**
+ * A search bar component with an input field and a search button.
+ *
+ * @param {object} props - The props for the component.
+ * @param {'idle' | 'pending' | 'success' | 'error'} props.status - The status of the search bar.
+ * @param {boolean} [props.autoFocus] - Whether the input field should be focused on mount.
+ * @param {boolean} [props.autoSubmit=false] - Whether the form should be submitted automatically on change.
+ * @returns {JSX.Element} The search bar component.
+ */
 export function SearchBar({
 	status,
 	autoSubmit = false,
