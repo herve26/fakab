@@ -1,14 +1,8 @@
 import stream from 'stream';
 import { Storage } from '@google-cloud/storage';
 import  { type UploadHandler } from '@remix-run/node';
-
-// Upload a file to Cloud Storage
-
-// type UploadStorageType = {
-//   filename: string, 
-//   fileStream: AsyncIterable<Uint8Array>,
-//   makePublic?: boolean
-// }
+import { saveFile } from './local-storage.server.ts';
+import path from 'path';
 
 /**
  * An upload handler that streams a file to Google Cloud Storage.
@@ -27,10 +21,30 @@ export const uploadStreamToCloudStorage: UploadHandler = async ({name,
   contentType,
   filename,
   data}) => {
+
+	if(!filename) throw new Error("Filename is mandatory")
+
+	if (process.env.NODE_ENV === "development") {
+		const file = {
+			name,
+			type: contentType,
+			async arrayBuffer() {
+				const chunks = [];
+				for await (const chunk of data) {
+					chunks.push(chunk);
+				}
+				return Buffer.concat(chunks);
+			}
+		} as unknown as File;
+		const uploadPath = path.join(process.cwd(), 'public', 'uploads', filename);
+		await saveFile(file, uploadPath);
+		return `/uploads/${filename}`;
+	}
+
+
   const bucketName = process.env["GOOGLE_CLOUD_BUCKET"]
 
   if(!bucketName) throw new Error("Bucket Name is Required")
-  if(!filename) throw new Error("Filename is mandatory")
 
   // Create Cloud Storage client
   const cloudStorage = new Storage();

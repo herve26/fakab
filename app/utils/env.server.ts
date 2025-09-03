@@ -11,7 +11,7 @@ const schema = z.object({
 	SESSION_SECRET: z.string(),
 	SUPABASE_URL: z.string(),
 	SUPABASE_ANON_KEY: z.string(),
-	GOOGLE_CLOUD_BUCKET: z.string()
+	GOOGLE_CLOUD_BUCKET: z.string().optional()
 })
 
 declare global {
